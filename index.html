@@ -139,17 +139,6 @@
             color: #fff;
             word-break: break-word;
         }
-
-        .delete-btn {
-            margin-top: 10px;
-            padding: 6px 12px;
-            background: rgba(255, 51, 51, 0.8);
-            font-size: 14px;
-        }
-
-        .delete-btn:hover {
-            background: #ff3333;
-        }
     </style>
 </head>
 <body>
@@ -169,10 +158,27 @@
     <script>
         let profiles = [];
 
-        function loadProfiles() {
-            const saved = profiles;
-            if (saved.length > 0) {
-                renderProfiles();
+        function extractUsernameFromUrl(url) {
+            try {
+                const urlObj = new URL(url);
+                const pathname = urlObj.pathname;
+                
+                // Handle facebook.com/username format
+                if (pathname && pathname !== '/' && !pathname.includes('profile.php')) {
+                    let username = pathname.replace(/^\//, '').split('/')[0];
+                    return decodeURIComponent(username);
+                }
+                
+                // Handle profile.php?id=123 format
+                const params = new URLSearchParams(urlObj.search);
+                const id = params.get('id');
+                if (id) {
+                    return id;
+                }
+                
+                return null;
+            } catch (e) {
+                return null;
             }
         }
 
@@ -203,31 +209,6 @@
             }
         }
 
-        function extractProfilePicUrl(url) {
-            try {
-                const urlObj = new URL(url);
-                let username = '';
-                
-                const pathname = urlObj.pathname;
-                if (pathname && pathname !== '/' && !pathname.includes('profile.php')) {
-                    username = pathname.replace(/^\//, '').split('/')[0];
-                } else {
-                    const params = new URLSearchParams(urlObj.search);
-                    const id = params.get('id');
-                    if (id) {
-                        username = id;
-                    }
-                }
-                
-                if (username) {
-                    return `https://graph.facebook.com/${username}/picture?type=large`;
-                }
-            } catch (e) {
-                return null;
-            }
-            return null;
-        }
-
         function addProfile() {
             const urlInput = document.getElementById('profileUrl');
             const url = urlInput.value.trim();
@@ -248,26 +229,19 @@
             }
 
             const name = extractNameFromUrl(fullUrl);
-            const picUrl = extractProfilePicUrl(fullUrl);
+            const username = extractUsernameFromUrl(fullUrl);
             
             const profile = {
                 id: Date.now(),
                 name: name,
                 url: fullUrl,
-                initial: name.charAt(0).toUpperCase(),
-                picUrl: picUrl
+                username: username,
+                initial: name.charAt(0).toUpperCase()
             };
 
             profiles.push(profile);
             urlInput.value = '';
             renderProfiles();
-        }
-
-        function deleteProfile(id) {
-            if (confirm('Remove this profile?')) {
-                profiles = profiles.filter(p => p.id !== id);
-                renderProfiles();
-            }
         }
 
         function renderProfiles() {
@@ -278,17 +252,20 @@
                 return;
             }
 
-            grid.innerHTML = profiles.map(profile => `
-                <div class="profile-card">
-                    <a href="${profile.url}" target="_blank" style="text-decoration: none; color: inherit;">
+            grid.innerHTML = profiles.map(profile => {
+                const picUrl = profile.username ? 
+                    `https://unavatar.io/facebook/${profile.username}` : 
+                    null;
+                
+                return `
+                    <a href="${profile.url}" target="_blank" class="profile-card">
                         <div class="profile-pic">
-                            ${profile.picUrl ? `<img src="${profile.picUrl}" alt="${profile.name}" onerror="this.parentElement.innerHTML='${profile.initial}'">` : profile.initial}
+                            ${picUrl ? `<img src="${picUrl}" alt="${profile.name}" onerror="this.parentElement.innerHTML='${profile.initial}'">` : profile.initial}
                         </div>
                         <div class="profile-name">${profile.name}</div>
                     </a>
-                    <button class="delete-btn" onclick="deleteProfile(${profile.id}); event.stopPropagation();">Delete</button>
-                </div>
-            `).join('');
+                `;
+            }).join('');
         }
 
         document.getElementById('profileUrl').addEventListener('keypress', function(e) {
@@ -296,8 +273,6 @@
                 addProfile();
             }
         });
-
-        loadProfiles();
     </script>
 </body>
 </html>
