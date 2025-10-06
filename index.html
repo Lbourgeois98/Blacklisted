@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>⚠️ Scammers ⚠️</title>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
@@ -49,6 +49,11 @@
       color: white;
     }
 
+    input[type="file"] {
+      color: white;
+      font-size: 14px;
+    }
+
     input[type="text"]::placeholder { color: rgba(255, 255, 255, 0.5); }
 
     input[type="text"]:focus {
@@ -57,7 +62,7 @@
     }
 
     button {
-      padding: 8px 16px;
+      padding: 10px 20px;
       background: #ff3333;
       color: white;
       border: none;
@@ -65,10 +70,15 @@
       cursor: pointer;
       font-size: 14px;
       font-weight: 600;
-      transition: background 0.3s;
+      transition: all 0.3s;
+      box-shadow: 0 0 10px rgba(255, 51, 51, 0);
     }
 
-    button:hover { background: #cc0000; }
+    button:hover {
+      background: #ff5555;
+      box-shadow: 0 0 15px rgba(255, 80, 80, 0.9);
+      transform: scale(1.05);
+    }
 
     .profiles-grid {
       display: grid;
@@ -240,18 +250,18 @@
           </a>
           <div class="profile-name">${profile.name}</div>
           <div class="edit-actions">
-            <button onclick="enableEdit(${profile.id}, '${profile.name.replace(/'/g, "\\'")}', '${profile.picUrl || ''}')">Edit</button>
+            <button onclick="enableEdit(${profile.id}, '${profile.name.replace(/'/g, "\\'")}')">Edit</button>
           </div>
         </div>
       `).join('');
     }
 
-    function enableEdit(id, currentName, currentPicUrl) {
+    function enableEdit(id, currentName) {
       const card = document.querySelector(`.profile-card[data-id='${id}']`);
       card.innerHTML = `
         <div class="edit-fields">
           <input type="text" id="editName-${id}" value="${currentName}" placeholder="Edit name">
-          <input type="text" id="editPic-${id}" value="${currentPicUrl}" placeholder="Edit image URL">
+          <input type="file" id="editFile-${id}" accept="image/*">
         </div>
         <div class="edit-actions">
           <button onclick="saveEdit(${id})">Save</button>
@@ -262,13 +272,26 @@
 
     async function saveEdit(id) {
       const name = document.getElementById(`editName-${id}`).value.trim();
-      const picUrl = document.getElementById(`editPic-${id}`).value.trim();
+      const fileInput = document.getElementById(`editFile-${id}`);
+      let picUrl = null;
 
-      const { error } = await supabase
-        .from('scammers')
-        .update({ name, picUrl })
-        .eq('id', id);
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const filePath = `profile-${id}-${Date.now()}-${file.name}`;
+        const { error: uploadError } = await supabase.storage.from('profile-images').upload(filePath, file);
+        if (uploadError) {
+          alert('Image upload failed.');
+          console.error(uploadError);
+          return;
+        }
+        const { data } = supabase.storage.from('profile-images').getPublicUrl(filePath);
+        picUrl = data.publicUrl;
+      }
 
+      const updateData = { name };
+      if (picUrl) updateData.picUrl = picUrl;
+
+      const { error } = await supabase.from('scammers').update(updateData).eq('id', id);
       if (error) {
         console.error(error);
         alert('Error saving changes');
