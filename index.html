@@ -1,319 +1,463 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>⚠️ Scammers ⚠️</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scammers — Dashboard</title>
+
+  <!-- Supabase client -->
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: linear-gradient(135deg, #1a1a1a 0%, #4a0000 100%);
-      color: white;
-      min-height: 100vh;
-      padding: 20px;
+    :root{
+      --accent:#ff3b3b;
+      --accent-strong:#cc0000;
+      --card-bg: rgba(255,255,255,0.04);
+      --panel-bg: rgba(0,0,0,0.32);
+      --muted: rgba(255,255,255,0.65);
+    }
+    * { box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg,#120000 0%, #000000 100%);
+      color:#fff;
+      padding:28px;
+      -webkit-font-smoothing:antialiased;
+    }
+    .container{ max-width:1200px; margin:0 auto; }
+
+    h1{
+      text-align:center;
+      color:var(--accent);
+      font-size:34px;
+      margin-bottom:18px;
+      text-shadow:0 4px 20px rgba(255,59,59,0.08);
     }
 
-    .container { max-width: 1200px; margin: 0 auto; }
+    /* top add area */
+    .top {
+      background:var(--card-bg);
+      padding:16px;
+      border-radius:12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      margin-bottom:22px;
+      border:1px solid rgba(255,59,59,0.14);
+    }
+    .top input[type="text"]{
+      flex:1;
+      padding:10px 12px;
+      background:transparent;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.06);
+      color: #fff;
+      font-size:14px;
+    }
+    .top button{
+      background:var(--accent);
+      border:none;
+      padding:10px 14px;
+      border-radius:8px;
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      transition: all .18s ease;
+      box-shadow:0 0 0 rgba(0,0,0,0);
+    }
+    .top button:hover{ transform:scale(1.03); box-shadow:0 6px 18px rgba(255,59,59,0.12); }
 
-    h1 {
-      color: #ff3333;
-      text-align: center;
-      margin-bottom: 40px;
-      font-size: 3em;
-      text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-      font-weight: 900;
-      letter-spacing: 2px;
+    /* grid */
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px,1fr));
+      gap:20px;
     }
 
-    .admin-section {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      padding: 25px;
-      border-radius: 15px;
-      margin-bottom: 30px;
-      border: 1px solid rgba(255, 51, 51, 0.3);
+    .card{
+      background:var(--card-bg);
+      border-radius:14px;
+      padding:18px;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:10px;
+      border:1px solid rgba(255,59,59,0.08);
+      transition: transform .18s ease, box-shadow .18s ease;
     }
+    .card:hover{ transform:translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.6); }
 
-    .input-group { display: flex; gap: 10px; }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 12px;
-      border: 2px solid rgba(255, 51, 51, 0.3);
-      border-radius: 8px;
-      font-size: 16px;
-      background: rgba(0, 0, 0, 0.3);
-      color: white;
+    .avatar{
+      width:120px; height:120px; border-radius:50%;
+      overflow:hidden; display:flex; align-items:center; justify-content:center;
+      background: linear-gradient(135deg,var(--accent),var(--accent-strong));
+      border:3px solid rgba(255,59,59,0.35);
+      font-weight:800; font-size:40px; color:white;
     }
+    .avatar img { width:100%; height:100%; object-fit:cover; display:block; }
 
-    button {
-      padding: 12px 24px;
-      background: #ff3333;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      transition: background 0.3s, transform 0.2s;
+    .name { font-weight:800; font-size:18px; text-align:center; }
+
+    .button-row{ display:flex; gap:10px; margin-top:6px; }
+    .btn {
+      background:transparent;
+      border:2px solid var(--accent);
+      color:var(--accent);
+      padding:8px 12px;
+      border-radius:8px;
+      cursor:pointer;
+      font-weight:700;
+      text-decoration:none;
     }
+    .btn:hover{ background:var(--accent); color:#fff; box-shadow:0 8px 20px rgba(255,59,59,0.12); transform:translateY(-2px); }
 
-    button:hover {
-      background: #cc0000;
-      transform: scale(1.05);
+    /* reports panel */
+    .reports-panel{
+      width:100%;
+      margin-top:12px;
+      background:var(--panel-bg);
+      border-radius:10px;
+      padding:10px;
+      display:none;
+      flex-direction:column;
+      gap:10px;
     }
-
-    .profiles-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 25px;
+    .reports-list{ max-height:200px; overflow:auto; display:flex; flex-direction:column; gap:8px; padding-right:6px; }
+    .report-item{
+      background:rgba(255,255,255,0.04);
+      border-left:4px solid var(--accent);
+      padding:8px 10px;
+      border-radius:6px;
+      white-space:pre-wrap;
+      color:#eee;
+      font-size:14px;
     }
-
-    .profile-card {
-      background: rgba(255, 255, 255, 0.07);
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
-      text-align: center;
-      padding: 20px;
-      transition: transform 0.3s;
-    }
-
-    .profile-card:hover { transform: translateY(-5px); }
-
-    .profile-pic {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 3px solid #ff3333;
-      margin: 0 auto 15px;
-      background: linear-gradient(135deg, #ff3333, #cc0000);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 40px;
-      font-weight: bold;
-    }
-
-    .profile-pic img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .profile-name {
-      font-size: 20px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      margin-bottom: 10px;
-    }
-
-    .view-btn {
-      display: inline-block;
-      padding: 10px 18px;
-      background: #ff3333;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-weight: 600;
-      transition: background 0.3s;
-    }
-
-    .view-btn:hover { background: #cc0000; }
-
-    .reports-section {
-      display: none;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 10px;
-      padding: 10px;
-      margin-top: 10px;
-      text-align: left;
-      max-height: 200px;
-      overflow-y: auto;
-    }
-
-    .report {
-      background: rgba(255, 51, 51, 0.1);
-      border-left: 3px solid #ff3333;
-      padding: 8px 10px;
-      margin-bottom: 8px;
-      border-radius: 6px;
-      font-size: 14px;
-      line-height: 1.4;
-    }
+    .no-reports { color:var(--muted); font-size:14px; padding:6px; }
 
     .add-report {
-      margin-top: 10px;
+      display:flex; gap:8px; align-items:flex-start;
     }
-
-    textarea {
-      width: 100%;
-      min-height: 60px;
-      border-radius: 6px;
-      border: none;
-      padding: 8px;
-      resize: vertical;
-      background: rgba(255, 255, 255, 0.1);
-      color: white;
-      font-size: 14px;
+    .add-report textarea{
+      flex:1; resize:vertical; min-height:60px; padding:8px; border-radius:8px; border:none;
+      background:rgba(255,255,255,0.04); color:#fff; font-size:14px;
     }
+    .add-report button{ background:var(--accent); border:none; color:#fff; padding:10px 12px; border-radius:8px; cursor:pointer; font-weight:700; }
 
-    textarea:focus { outline: 2px solid #ff3333; }
+    /* edit row inside card */
+    .edit-row{ width:100%; display:flex; gap:8px; align-items:center; margin-top:8px; }
+    .edit-row input[type="text"]{ flex:1; padding:8px; border-radius:8px; border:none; background:rgba(255,255,255,0.03); color:#fff; }
+    .edit-row input[type="file"]{ color: #fff; }
+    .edit-actions{ display:flex; gap:8px; }
+
+    /* small helpers */
+    .muted { color:var(--muted); font-size:13px; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>⚠️ SCAMMERS ⚠️</h1>
+    <h1>⚠️ Scammers</h1>
 
-    <div class="admin-section">
-      <div class="input-group">
-        <input type="text" id="profileUrl" placeholder="Paste Facebook profile URL...">
-        <button onclick="addProfile()">Add</button>
+    <div class="top">
+      <input id="fbInput" placeholder="Paste Facebook profile URL (e.g. facebook.com/username)..." />
+      <button id="fetchBtn">Fetch + Preview</button>
+    </div>
+
+    <div id="previewBox" style="display:none; margin:14px 0 22px;">
+      <div style="display:flex; gap:12px; align-items:center;">
+        <div id="previewAvatar" class="avatar"></div>
+        <div style="flex:1;">
+          <div style="font-weight:800; font-size:16px;" id="previewName"></div>
+          <div class="muted" id="previewUrl"></div>
+          <div style="margin-top:8px; display:flex; gap:8px;">
+            <input id="manualName" placeholder="Edit name before saving (optional)" style="flex:1; padding:8px; border-radius:8px; border:none; background:rgba(255,255,255,0.03); color:#fff;" />
+            <input id="manualFile" type="file" accept="image/*" />
+            <button id="savePreviewBtn" style="background:var(--accent); color:#fff; border:none; padding:8px 12px; border-radius:8px; font-weight:700;">Save</button>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="profiles-grid" id="profilesGrid"></div>
+    <div id="grid" class="grid"></div>
   </div>
 
   <script>
+    // ---------- CONFIG ----------
     const SUPABASE_URL = "https://jikydjqvakjirisekudj.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3lkanF2YWtqaXJpc2VrdWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MjU1MTUsImV4cCI6MjA3NTMwMTUxNX0.eKtrwpGJuZcfnm2MfOmRlwrunSy6kvXQJqfKJ6DzuG4";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const STORAGE_BUCKET = "profile-images"; // must exist and be public or have policies
 
-    async function loadProfiles() {
-      const { data: scammers, error } = await supabase.from("scammers").select("*").order("id", { ascending: false });
-      if (error) console.error(error);
-      else renderProfiles(scammers);
-    }
-
-    function extractNameFromUrl(url) {
-      try {
-        const urlObj = new URL(url);
-        const pathname = urlObj.pathname;
-        if (pathname && pathname !== "/" && !pathname.includes("profile.php")) {
-          let name = pathname.replace(/^\//, "").split("/")[0];
-          name = decodeURIComponent(name).replace(/[._-]/g, " ")
-            .split(" ")
-            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-            .join(" ");
-          return name;
+    // ---------- UTILS ----------
+    function extractNameFromUrl(url){
+      try{
+        const u = new URL(url);
+        const path = u.pathname.replace(/^\/|\/$/g,'');
+        if (path && !path.includes('profile.php')) {
+          const name = decodeURIComponent(path.split('/')[0]).replace(/[._-]/g,' ')
+            .split(' ').map(w=> w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+          return name || "Facebook User";
         }
-        const params = new URLSearchParams(urlObj.search);
-        const id = params.get("id");
+        const id = new URLSearchParams(u.search).get('id');
         return id ? `User ${id}` : "Facebook User";
-      } catch {
-        return "Facebook User";
-      }
+      }catch(e){ return "Facebook User"; }
     }
 
-    function extractProfilePicUrl(url) {
-      try {
-        const urlObj = new URL(url);
-        let username = "";
-        const pathname = urlObj.pathname;
-        if (pathname && pathname !== "/" && !pathname.includes("profile.php")) {
-          username = pathname.replace(/^\//, "").split("/")[0];
-        } else {
-          const params = new URLSearchParams(urlObj.search);
-          const id = params.get("id");
-          if (id) username = id;
-        }
+    function extractPicFromUrl(url){
+      try{
+        const u = new URL(url);
+        const path = u.pathname.replace(/^\/|\/$/g,'');
+        let username = '';
+        if (path && !path.includes('profile.php')) username = path.split('/')[0];
+        else username = new URLSearchParams(u.search).get('id') || '';
         return username ? `https://graph.facebook.com/${username}/picture?type=large` : null;
-      } catch {
-        return null;
-      }
+      }catch(e){ return null; }
     }
 
-    async function addProfile() {
-      const input = document.getElementById("profileUrl");
-      const url = input.value.trim();
-      if (!url) return alert("Enter a Facebook profile URL");
-      if (!url.includes("facebook.com") && !url.includes("fb.com")) return alert("Not a valid Facebook URL");
+    // ---------- PREVIEW & ADD ----------
+    const fbInput = document.getElementById('fbInput');
+    const fetchBtn = document.getElementById('fetchBtn');
+    const previewBox = document.getElementById('previewBox');
+    const previewAvatar = document.getElementById('previewAvatar');
+    const previewName = document.getElementById('previewName');
+    const previewUrl = document.getElementById('previewUrl');
+    const manualName = document.getElementById('manualName');
+    const manualFile = document.getElementById('manualFile');
+    const savePreviewBtn = document.getElementById('savePreviewBtn');
 
-      const fullUrl = url.startsWith("http") ? url : "https://" + url;
-      const name = extractNameFromUrl(fullUrl);
-      const picUrl = extractProfilePicUrl(fullUrl);
+    let currentPreview = { url:'', name:'', pic:null }; // pic = graph url or null
 
-      const { error } = await supabase.from("scammers").insert([{ name, url: fullUrl, picUrl }]);
-      if (error) console.error(error);
-      else {
-        input.value = "";
-        loadProfiles();
+    fetchBtn.onclick = () => {
+      const raw = fbInput.value.trim();
+      if (!raw) return alert('Paste a Facebook profile URL first.');
+      const full = raw.startsWith('http') ? raw : ('https://'+raw);
+      try{
+        const name = extractNameFromUrl(full);
+        const pic = extractPicFromUrl(full);
+        currentPreview = { url: full, name, pic };
+        previewName.textContent = name;
+        previewUrl.textContent = full;
+        manualName.value = name;
+        previewAvatar.innerHTML = pic ? `<img src="${pic}" alt="${name}" onerror="this.style.display='none'">` : name.charAt(0).toUpperCase();
+        previewBox.style.display = 'block';
+      }catch(e){
+        alert('Invalid URL');
       }
+    };
+
+    // save preview (creates new scammers row; if file uploaded, upload to storage first)
+    savePreviewBtn.onclick = async () => {
+      const useName = manualName.value.trim() || currentPreview.name;
+      const file = manualFile.files[0];
+      let picurl = currentPreview.pic || null;
+
+      if (file) {
+        // upload file to storage
+        const filePath = `scammer-${Date.now()}-${file.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage.from(STORAGE_BUCKET).upload(filePath, file);
+        if (uploadError) {
+          console.error(uploadError);
+          return alert('Image upload failed: ' + (uploadError.message || uploadError));
+        }
+        const { data: urlData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(uploadData.path);
+        picurl = urlData.publicUrl;
+      }
+
+      const { error } = await supabase.from('scammers').insert([{ name: useName, url: currentPreview.url, picurl }]);
+      if (error) {
+        console.error(error);
+        return alert('Failed to save profile: ' + (error.message || error));
+      }
+
+      // clear preview and reload grid
+      fbInput.value = '';
+      previewBox.style.display = 'none';
+      manualFile.value = '';
+      manualName.value = '';
+      loadGrid();
+    };
+
+    // ---------- GRID & RENDER ----------
+    const grid = document.getElementById('grid');
+
+    async function loadGrid(){
+      const { data, error } = await supabase.from('scammers').select('*').order('id',{ ascending:false });
+      if (error) { console.error(error); return; }
+      renderGrid(data || []);
     }
 
-    async function toggleReports(id) {
-      const section = document.getElementById(`reports-${id}`);
-      if (section.style.display === "block") {
-        section.style.display = "none";
+    function renderGrid(items){
+      grid.innerHTML = items.map(item => {
+        // inline id-based element ids
+        const avatarHtml = item.picurl ? `<img src="${item.picurl}" alt="${escapeHtml(item.name)}" onerror="this.style.display='none'">` : `${escapeHtml(item.name ? item.name[0].toUpperCase() : '?')}`;
+        return `
+          <div class="card" data-id="${item.id}">
+            <div class="avatar" id="avatar-${item.id}">${avatarHtml}</div>
+            <div class="name" id="name-${item.id}">${escapeHtml(item.name || 'Unknown')}</div>
+
+            <div class="button-row">
+              <a class="btn btn-view" href="${item.url || '#'}" target="_blank" rel="noopener noreferrer">View Profile</a>
+              <button class="btn btn-reports" data-id="${item.id}">View Reports</button>
+              <button class="btn btn-edit" data-id="${item.id}">Edit</button>
+            </div>
+
+            <div class="reports-panel" id="reports-panel-${item.id}">
+              <!-- populated dynamically -->
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // attach handlers
+      document.querySelectorAll('.btn-reports').forEach(b => {
+        b.onclick = (e) => toggleReportsPanel(Number(b.dataset.id));
+      });
+      document.querySelectorAll('.btn-edit').forEach(b => {
+        b.onclick = (e) => enableEditMode(Number(b.dataset.id));
+      });
+    }
+
+    // ---------- REPORTS ----------
+    async function toggleReportsPanel(scammerId){
+      const panel = document.getElementById(`reports-panel-${scammerId}`);
+      if (!panel) return;
+      if (panel.style.display === 'flex') { panel.style.display = 'none'; return; }
+
+      // fetch reports for this scammer
+      panel.style.display = 'flex';
+      panel.style.flexDirection = 'column';
+      panel.innerHTML = `<div class="no-reports muted">Loading reports...</div>`;
+
+      const { data: reports, error } = await supabase
+        .from('reports')
+        .select('*')
+        .eq('scammer_id', scammerId)
+        .order('created_at', { ascending:false });
+
+      if (error) {
+        console.error(error);
+        panel.innerHTML = `<div class="no-reports">Failed to load reports.</div>`;
         return;
       }
 
-      // fetch reports
-      const { data: reports, error } = await supabase
-        .from("reports")
-        .select("*")
-        .eq("scammer_id", id)
-        .order("created_at", { ascending: false });
-      if (error) console.error(error);
+      const listHtml = (reports && reports.length)
+        ? reports.map(r => `<div class="report-item">${escapeHtml(r.text || r.description || '[no text]')}</div>`).join('')
+        : `<div class="no-reports">No reports yet.</div>`;
 
-      section.innerHTML = `
-        ${(reports && reports.length)
-          ? reports.map(r => `<div class="report">${r.text}</div>`).join("")
-          : "<div class='report'>No reports yet.</div>"}
+      panel.innerHTML = `
+        <div class="reports-list">${listHtml}</div>
         <div class="add-report">
-          <textarea id="reportText-${id}" placeholder="Add a new report..."></textarea>
-          <button onclick="submitReport(${id})">Submit Report</button>
+          <textarea id="report-input-${scammerId}" placeholder="Describe how this person scammed..."></textarea>
+          <button onclick="submitReport(${scammerId})">Submit</button>
         </div>
       `;
-      section.style.display = "block";
     }
 
-    async function submitReport(id) {
-      const textArea = document.getElementById(`reportText-${id}`);
-      const text = textArea.value.trim();
-      if (!text) return alert("Please write something first.");
-
-      const { error } = await supabase.from("reports").insert([{ scammer_id: id, text }]);
+    async function submitReport(scammerId){
+      const ta = document.getElementById(`report-input-${scammerId}`);
+      if (!ta) return;
+      const val = ta.value.trim();
+      if (!val) return alert('Please write a report before submitting.');
+      // insert into reports table; column name used is 'text' (if your column is named 'description' change below)
+      const { error } = await supabase.from('reports').insert([{ scammer_id: scammerId, text: val }]);
       if (error) {
         console.error(error);
-        alert("Failed to submit report.");
-      } else {
-        textArea.value = "";
-        toggleReports(id); // refresh list
+        return alert('Failed to submit report: ' + (error.message || error));
       }
+      ta.value = '';
+      // refresh panel contents
+      toggleReportsPanel(scammerId); // will hide -> so call again to reopen
+      setTimeout(()=> toggleReportsPanel(scammerId), 120); // quick reopen to refresh list
     }
 
-    function renderProfiles(scammers) {
-      const grid = document.getElementById("profilesGrid");
-      grid.innerHTML = scammers.map(profile => `
-        <div class="profile-card">
-          <div class="profile-pic">
-            ${profile.picUrl
-              ? `<img src="${profile.picUrl}" alt="${profile.name}" onerror="this.style.display='none'">`
-              : profile.name[0].toUpperCase()}
-          </div>
-          <div class="profile-name">${profile.name}</div>
-          <div class="button-group">
-            <a href="${profile.url}" target="_blank" class="view-btn">View Profile</a>
-            <button class="view-btn" onclick="toggleReports(${profile.id})">View Reports</button>
-          </div>
-          <div id="reports-${profile.id}" class="reports-section"></div>
+    // ---------- EDIT PROFILE ----------
+    // create editable inputs inline inside the card
+    function enableEditMode(scammerId){
+      const card = document.querySelector(`.card[data-id="${scammerId}"]`);
+      if (!card) return;
+      const currentNameEl = card.querySelector(`#name-${scammerId}`);
+      const currentAvatar = card.querySelector(`#avatar-${scammerId}`);
+      const currentName = currentNameEl ? currentNameEl.textContent : '';
+      const currentPicHtml = currentAvatar ? currentAvatar.innerHTML : '';
+
+      // replace inner content with edit controls
+      card.querySelector('.button-row').style.display = 'none';
+      const editRow = document.createElement('div');
+      editRow.className = 'edit-row';
+      editRow.innerHTML = `
+        <input id="edit-name-${scammerId}" type="text" value="${escapeHtmlAttr(currentName)}" />
+        <input id="edit-file-${scammerId}" type="file" accept="image/*" />
+        <div class="edit-actions">
+          <button id="save-edit-${scammerId}">Save</button>
+          <button id="cancel-edit-${scammerId}">Cancel</button>
         </div>
-      `).join("");
+      `;
+      card.appendChild(editRow);
+
+      document.getElementById(`cancel-edit-${scammerId}`).onclick = () => {
+        editRow.remove();
+        card.querySelector('.button-row').style.display = '';
+      };
+
+      document.getElementById(`save-edit-${scammerId}`).onclick = async () => {
+        const newName = document.getElementById(`edit-name-${scammerId}`).value.trim();
+        const fileInput = document.getElementById(`edit-file-${scammerId}`);
+        let newPicUrl = null;
+        if (fileInput.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          const filePath = `scammer-${scammerId}-${Date.now()}-${file.name}`;
+          const { data: uploadData, error: uploadError } = await supabase.storage.from(STORAGE_BUCKET).upload(filePath, file);
+          if (uploadError) {
+            console.error(uploadError);
+            return alert('Upload failed: ' + (uploadError.message || uploadError));
+          }
+          const { data: urlData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(uploadData.path);
+          newPicUrl = urlData.publicUrl;
+        }
+
+        const updateObj = {};
+        if (newName) updateObj.name = newName;
+        if (newPicUrl) updateObj.picurl = newPicUrl;
+
+        if (Object.keys(updateObj).length === 0) {
+          alert('Nothing to save.');
+          return;
+        }
+
+        const { error } = await supabase.from('scammers').update(updateObj).eq('id', scammerId);
+        if (error) {
+          console.error(error);
+          return alert('Failed to save: ' + (error.message || error));
+        }
+
+        // update UI quickly
+        if (newName) {
+          const nameEl = card.querySelector(`#name-${scammerId}`);
+          if (nameEl) nameEl.textContent = newName;
+        }
+        if (newPicUrl) {
+          const avatar = card.querySelector(`#avatar-${scammerId}`);
+          if (avatar) avatar.innerHTML = `<img src="${newPicUrl}" alt="${escapeHtml(newName||currentName)}">`;
+        }
+
+        editRow.remove();
+        card.querySelector('.button-row').style.display = '';
+      };
     }
 
-    loadProfiles();
+    // ---------- HELPERS ----------
+    function escapeHtml(str){
+      if (!str && str !== 0) return '';
+      return String(str).replace(/[&<>"']/g, function(m){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[m]; });
+    }
+    function escapeHtmlAttr(str){ return escapeHtml(str).replace(/"/g,'&quot;'); }
+
+    // ---------- startup ----------
+    loadGrid();
+
+    // expose loadGrid in window for debugging
+    window.loadGrid = loadGrid;
+    window.submitReport = submitReport;
   </script>
 </body>
 </html>
