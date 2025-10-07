@@ -6,8 +6,6 @@
   <title>⚠️ Scammers ⚠️</title>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: system-ui, sans-serif;
       background: linear-gradient(135deg, #1a1a1a 0%, #4a0000 100%);
@@ -15,263 +13,206 @@
       min-height: 100vh;
       padding: 20px;
     }
-
-    .container { max-width: 1200px; margin: 0 auto; }
-
     h1 {
-      color: #ff3333;
       text-align: center;
-      margin-bottom: 40px;
+      color: #ff3333;
       font-size: 3em;
-      text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
-      font-weight: 900;
-      letter-spacing: 2px;
-    }
-
-    .admin-section {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      padding: 25px;
-      border-radius: 15px;
       margin-bottom: 30px;
-      border: 1px solid rgba(255, 51, 51, 0.3);
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
     }
-
-    .input-group {
+    .admin {
+      background: rgba(255,255,255,0.05);
+      padding: 20px;
+      border-radius: 15px;
+      border: 1px solid rgba(255,51,51,0.3);
+      margin-bottom: 30px;
+    }
+    .inputs {
       display: flex;
+      flex-wrap: wrap;
       gap: 10px;
       align-items: center;
     }
-
     input[type="text"], input[type="file"] {
       flex: 1;
       padding: 12px;
-      border: 2px solid rgba(255, 51, 51, 0.3);
+      border: 2px solid rgba(255,51,51,0.3);
       border-radius: 8px;
       font-size: 16px;
-      background: rgba(0, 0, 0, 0.3);
+      background: rgba(0,0,0,0.3);
       color: white;
     }
-
-    input::placeholder { color: rgba(255,255,255,0.5); }
     input:focus { outline: none; border-color: #ff3333; }
-
     button {
       padding: 12px 24px;
+      border-radius: 8px;
+      border: none;
       background: #ff3333;
       color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
       font-weight: 600;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 10px transparent;
+      cursor: pointer;
+      transition: 0.3s;
     }
-
-    button:hover {
-      background: #cc0000;
-      box-shadow: 0 0 15px #ff3333;
-    }
-
-    .profiles-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .profile-card {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      border-radius: 15px;
-      padding: 20px;
+    button:hover { background: #cc0000; box-shadow: 0 0 15px #ff3333; }
+    .preview {
       text-align: center;
-      transition: transform 0.3s, box-shadow 0.3s;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-      border: 1px solid rgba(255, 51, 51, 0.2);
-      position: relative;
+      margin-top: 15px;
     }
-
-    .profile-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(255, 51, 51, 0.3);
-      border-color: #ff3333;
-    }
-
-    .profile-pic {
+    .preview img {
       width: 120px;
       height: 120px;
       border-radius: 50%;
-      margin: 0 auto 15px;
-      background: linear-gradient(135deg, #ff3333 0%, #cc0000 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 48px;
-      font-weight: bold;
-      overflow: hidden;
-      border: 3px solid rgba(255, 51, 51, 0.5);
-    }
-
-    .profile-pic img {
-      width: 100%;
-      height: 100%;
       object-fit: cover;
+      border: 3px solid #ff3333;
+      margin-bottom: 10px;
     }
-
-    .profile-name {
-      font-size: 18px;
-      font-weight: 600;
-      word-break: break-word;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+      gap: 20px;
     }
-
-    .edit-buttons {
-      margin-top: 10px;
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,51,51,0.3);
+      border-radius: 15px;
+      text-align: center;
+      padding: 20px;
+      transition: 0.3s;
+    }
+    .card:hover { transform: translateY(-5px); border-color: #ff3333; box-shadow: 0 0 15px rgba(255,51,51,0.3); }
+    .card img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      border: 2px solid #ff3333;
+      object-fit: cover;
+      margin-bottom: 10px;
+    }
+    .edit-btns {
       display: flex;
       justify-content: center;
       gap: 10px;
+      margin-top: 10px;
     }
-
-    .hidden { display: none; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>⚠️ SCAMMERS ⚠️</h1>
-    <div class="admin-section">
-      <div class="input-group">
-        <input type="text" id="profileName" placeholder="Enter name..." />
-        <input type="file" id="profilePic" accept="image/*" />
-        <button onclick="addProfile()">Add</button>
-      </div>
+  <h1>⚠️ SCAMMERS ⚠️</h1>
+
+  <div class="admin">
+    <div class="inputs">
+      <input type="text" id="fbUrl" placeholder="Paste Facebook profile URL..." />
+      <button onclick="fetchFacebook()">Fetch</button>
     </div>
-    <div class="profiles-grid" id="profilesGrid"></div>
+    <div class="preview" id="previewSection" style="display:none;">
+      <img id="previewImg" src="" alt="Preview" />
+      <div>
+        <input type="text" id="nameInput" placeholder="Name" />
+        <input type="file" id="fileInput" accept="image/*" />
+      </div>
+      <button onclick="saveProfile()">Save</button>
+    </div>
   </div>
 
+  <div class="grid" id="profilesGrid"></div>
+
   <script>
-    // 🔧 Supabase setup
     const SUPABASE_URL = "https://jikydjqvakjirisekudj.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3lkanF2YWtqaXJpc2VrdWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MjU1MTUsImV4cCI6MjA3NTMwMTUxNX0.eKtrwpGJuZcfnm2MfOmRlwrunSy6kvXQJqfKJ6DzuG4";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function loadProfiles() {
-      const { data, error } = await supabase
-        .from("scammers")
-        .select("*")
-        .order("id", { ascending: false });
-      if (error) console.error(error);
-      else renderProfiles(data);
+    let tempName = "";
+    let tempPic = "";
+    let tempUrl = "";
+
+    // --- Extract name ---
+    function extractNameFromUrl(url) {
+      try {
+        const u = new URL(url);
+        const path = u.pathname.replace(/^\/|\/$/g, "");
+        if (path && !path.includes("profile.php")) {
+          return path
+            .split("/")[0]
+            .replace(/[._-]/g, " ")
+            .split(" ")
+            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+            .join(" ");
+        }
+        const id = new URLSearchParams(u.search).get("id");
+        return id ? `User ${id}` : "Facebook User";
+      } catch { return "Facebook User"; }
     }
 
-    async function addProfile() {
-      const name = document.getElementById("profileName").value.trim();
-      const file = document.getElementById("profilePic").files[0];
+    // --- Extract Facebook pic URL ---
+    function extractPicFromUrl(url) {
+      try {
+        const u = new URL(url);
+        const path = u.pathname.replace(/^\/|\/$/g, "");
+        let username = "";
+        if (path && !path.includes("profile.php")) username = path.split("/")[0];
+        else {
+          const id = new URLSearchParams(u.search).get("id");
+          if (id) username = id;
+        }
+        return username ? `https://graph.facebook.com/${username}/picture?type=large` : null;
+      } catch { return null; }
+    }
 
-      if (!name) return alert("Enter a name.");
-      if (!file) return alert("Choose a picture.");
+    // --- Fetch Facebook info ---
+    async function fetchFacebook() {
+      const fbUrl = document.getElementById("fbUrl").value.trim();
+      if (!fbUrl) return alert("Paste a Facebook profile URL first!");
 
-      const filePath = `${Date.now()}_${file.name}`;
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("profile-images")
-        .upload(filePath, file);
+      const fixedUrl = fbUrl.startsWith("http") ? fbUrl : "https://" + fbUrl;
+      tempUrl = fixedUrl;
+      tempName = extractNameFromUrl(fixedUrl);
+      tempPic = extractPicFromUrl(fixedUrl);
 
-      if (uploadError) {
-        alert("Upload failed: " + uploadError.message);
-        console.error(uploadError);
-        return;
+      document.getElementById("previewImg").src = tempPic || "";
+      document.getElementById("nameInput").value = tempName;
+      document.getElementById("previewSection").style.display = "block";
+    }
+
+    // --- Save profile to Supabase ---
+    async function saveProfile() {
+      const name = document.getElementById("nameInput").value.trim() || tempName;
+      const file = document.getElementById("fileInput").files[0];
+      let picUrl = tempPic;
+
+      if (file) {
+        const filePath = `${Date.now()}_${file.name}`;
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from("profile-images")
+          .upload(filePath, file);
+        if (uploadError) return alert("Upload failed: " + uploadError.message);
+        const { data: urlData } = supabase.storage
+          .from("profile-images")
+          .getPublicUrl(uploadData.path);
+        picUrl = urlData.publicUrl;
       }
 
-      const { data: urlData } = supabase.storage
-        .from("profile-images")
-        .getPublicUrl(uploadData.path);
-      const picUrl = urlData.publicUrl;
-
-      const { error } = await supabase.from("scammers").insert([{ name, picUrl }]);
-      if (error) console.error(error);
+      const { error } = await supabase.from("scammers").insert([{ name, url: tempUrl, picUrl }]);
+      if (error) alert("Error: " + error.message);
       else {
-        document.getElementById("profileName").value = "";
-        document.getElementById("profilePic").value = "";
+        alert("Profile added!");
+        document.getElementById("fbUrl").value = "";
+        document.getElementById("previewSection").style.display = "none";
         loadProfiles();
       }
     }
 
-    function renderProfiles(profiles) {
+    // --- Load and render profiles ---
+    async function loadProfiles() {
+      const { data, error } = await supabase.from("scammers").select("*").order("id", { ascending: false });
+      if (error) return console.error(error);
       const grid = document.getElementById("profilesGrid");
-      grid.innerHTML = profiles
-        .map(
-          (profile) => `
-        <div class="profile-card">
-          <div class="profile-pic" id="pic-${profile.id}">
-            ${
-              profile.picUrl
-                ? `<img src="${profile.picUrl}" alt="${profile.name}" />`
-                : profile.name[0].toUpperCase()
-            }
-          </div>
-          <div class="profile-name" id="name-${profile.id}">${profile.name}</div>
-          <div class="edit-buttons">
-            <button onclick="enableEdit(${profile.id})">Edit</button>
-          </div>
-        </div>`
-        )
-        .join("");
-    }
-
-    function enableEdit(id) {
-      const nameEl = document.getElementById(`name-${id}`);
-      const picEl = document.getElementById(`pic-${id}`);
-      const card = nameEl.closest(".profile-card");
-      const name = nameEl.textContent;
-
-      card.innerHTML = `
-        <input type="text" id="edit-name-${id}" value="${name}" style="width:100%;padding:8px;border-radius:6px;margin-bottom:8px;">
-        <input type="file" id="edit-pic-${id}" accept="image/*" style="margin-bottom:8px;">
-        <div class="edit-buttons">
-          <button onclick="saveEdit(${id})">Save</button>
-          <button onclick="loadProfiles()">Cancel</button>
+      grid.innerHTML = data.map(p => `
+        <div class="card">
+          <img src="${p.picUrl || "https://via.placeholder.com/100"}" alt="${p.name}" />
+          <div>${p.name}</div>
+          ${p.url ? `<a href="${p.url}" target="_blank" style="color:#ff9999;text-decoration:none;">View Profile</a>` : ""}
         </div>
-      `;
-    }
-
-    async function saveEdit(id) {
-      const newName = document.getElementById(`edit-name-${id}`).value.trim();
-      const newPicFile = document.getElementById(`edit-pic-${id}`).files[0];
-      let newPicUrl;
-
-      if (newPicFile) {
-        const filePath = `${Date.now()}_${newPicFile.name}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("profile-images")
-          .upload(filePath, newPicFile);
-
-        if (uploadError) {
-          alert("Upload failed: " + uploadError.message);
-          console.error(uploadError);
-          return;
-        }
-
-        const { data: urlData } = supabase.storage
-          .from("profile-images")
-          .getPublicUrl(uploadData.path);
-        newPicUrl = urlData.publicUrl;
-      }
-
-      const updateData = { name: newName };
-      if (newPicUrl) updateData.picUrl = newPicUrl;
-
-      const { error: updateError } = await supabase
-        .from("scammers")
-        .update(updateData)
-        .eq("id", id);
-
-      if (updateError) {
-        alert("Save failed: " + updateError.message);
-        console.error(updateError);
-        return;
-      }
-
-      loadProfiles();
+      `).join("");
     }
 
     loadProfiles();
