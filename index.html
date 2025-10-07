@@ -31,7 +31,6 @@
       letter-spacing: 2px;
     }
 
-    /* Facebook URL input box (restored original look) */
     .admin-section {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(10px);
@@ -79,9 +78,9 @@
     button:hover {
       background: #cc0000;
       transform: translateY(-2px);
+      box-shadow: 0 0 10px #ff3333;
     }
 
-    /* Grid layout */
     .profiles-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -126,6 +125,7 @@
     .edit-btn:hover {
       background: #ff0000;
       transform: scale(1.05);
+      box-shadow: 0 0 10px #ff3333;
     }
 
     .profile-pic {
@@ -161,14 +161,17 @@
     .button-row {
       width: 100%;
       display: flex;
+      justify-content: space-between;
       gap: 10px;
       margin-top: auto;
     }
 
     .btn {
       flex: 1;
-      text-align: center;
-      padding: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 45px;
       border: 2px solid #ff3333;
       color: #ff3333;
       background: transparent;
@@ -176,12 +179,15 @@
       cursor: pointer;
       font-weight: 600;
       text-decoration: none;
+      font-size: 15px;
       transition: all 0.25s ease;
+      text-align: center;
     }
 
     .btn:hover {
       background: #ff3333;
       color: white;
+      box-shadow: 0 0 10px #ff3333;
       transform: translateY(-2px);
     }
 
@@ -193,6 +199,7 @@
       display: none;
       flex-direction: column;
       gap: 8px;
+      width: 100%;
     }
 
     .report-item {
@@ -225,20 +232,18 @@
 <body>
   <div class="container">
     <h1>⚠️ SCAMMERS ⚠️</h1>
-
     <div class="admin-section">
       <div class="input-group">
-        <input type="text" id="profileUrl" placeholder="Paste Facebook profile URL...">
+        <input type="text" id="profileUrl" placeholder="Paste Facebook profile URL..." />
         <button onclick="addProfile()">Add</button>
       </div>
     </div>
-
     <div class="profiles-grid" id="profilesGrid"></div>
   </div>
 
   <script>
     const SUPABASE_URL = "https://jikydjqvakjirisekudj.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3lkanF2YWtqaXJpc2VrdWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MjU1MTUsImV4cCI6MjA3NTMwMTUxNX0.eKtrwpGJuZcfnm2MfOmRlwrunSy6kvXQJqfKJ6DzuG4";
+    const SUPABASE_KEY = "YOUR-ANON-KEY-HERE";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function loadProfiles() {
@@ -252,16 +257,20 @@
 
     function extractNameFromUrl(url) {
       try {
-        const u = new URL(url);
-        const path = u.pathname.replace(/^\//, "").split("/")[0];
-        if (path && !path.includes("profile.php")) {
-          return decodeURIComponent(path)
+        const urlObj = new URL(url);
+        const pathname = urlObj.pathname;
+        if (pathname && pathname !== "/" && !pathname.includes("profile.php")) {
+          let name = pathname.replace(/^\//, "").split("/")[0];
+          name = decodeURIComponent(name);
+          name = name
             .replace(/[._-]/g, " ")
             .split(" ")
-            .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
             .join(" ");
+          return name;
         }
-        const id = new URLSearchParams(u.search).get("id");
+        const params = new URLSearchParams(urlObj.search);
+        const id = params.get("id");
         return id ? `User ${id}` : "Facebook User";
       } catch {
         return "Facebook User";
@@ -270,12 +279,19 @@
 
     function extractProfilePicUrl(url) {
       try {
-        const u = new URL(url);
-        const path = u.pathname.replace(/^\//, "").split("/")[0];
-        const username = path.includes("profile.php")
-          ? new URLSearchParams(u.search).get("id")
-          : path;
-        return username ? `https://graph.facebook.com/${username}/picture?type=large` : null;
+        const urlObj = new URL(url);
+        let username = "";
+        const pathname = urlObj.pathname;
+        if (pathname && pathname !== "/" && !pathname.includes("profile.php")) {
+          username = pathname.replace(/^\//, "").split("/")[0];
+        } else {
+          const params = new URLSearchParams(urlObj.search);
+          const id = params.get("id");
+          if (id) username = id;
+        }
+        return username
+          ? `https://graph.facebook.com/${username}/picture?type=large`
+          : null;
       } catch {
         return null;
       }
@@ -289,7 +305,7 @@
       const name = extractNameFromUrl(fullUrl);
       const picUrl = extractProfilePicUrl(fullUrl);
 
-      const { error } = await supabase.from("scammers").insert([{ name, url: fullUrl, picurl: picUrl }]);
+      const { error } = await supabase.from("scammers").insert([{ name, url: fullUrl, picUrl }]);
       if (error) console.error(error);
       else {
         input.value = "";
@@ -297,61 +313,118 @@
       }
     }
 
-    async function addReport(id) {
-      const textarea = document.getElementById(`reportInput-${id}`);
-      const text = textarea.value.trim();
-      if (!text) return alert("Enter a report first.");
-      await supabase.from("reports").insert([{ scammer_id: id, text }]);
-      textarea.value = "";
-      toggleReports(id);
+    async function loadReports(profileId) {
+      const { data, error } = await supabase
+        .from("reports")
+        .select("*")
+        .eq("scammer_id", profileId)
+        .order("id", { ascending: false });
+      if (error) console.error(error);
+      return data || [];
     }
 
-    async function toggleReports(id) {
-      const panel = document.getElementById(`reports-${id}`);
-      if (panel.style.display === "flex") {
-        panel.style.display = "none";
-        return;
-      }
-      panel.style.display = "flex";
-      const { data, error } = await supabase.from("reports").select("*").eq("scammer_id", id);
-      if (error) return;
-      const list = data.map(r => `<div class="report-item">${r.text}</div>`).join("") || "<div>No reports yet.</div>";
-      panel.innerHTML = `
-        <div>${list}</div>
-        <div class="add-report">
-          <textarea id="reportInput-${id}" placeholder="Add a new report..."></textarea>
-          <button onclick="addReport(${id})">Submit</button>
-        </div>
-      `;
+    async function addReport(profileId, text) {
+      if (!text.trim()) return;
+      const { error } = await supabase.from("reports").insert([{ scammer_id: profileId, text }]);
+      if (error) console.error(error);
+      loadProfiles();
     }
 
-    function renderProfiles(profiles) {
+    async function enableEditing(profile) {
+      const newName = prompt("Edit Name:", profile.name) || profile.name;
+      const newPic = prompt("Paste new image URL or leave blank:", "") || profile.picUrl;
+      const { error } = await supabase
+        .from("scammers")
+        .update({ name: newName, picUrl: newPic })
+        .eq("id", profile.id);
+      if (error) console.error(error);
+      loadProfiles();
+    }
+
+    async function renderProfiles(profiles) {
       const grid = document.getElementById("profilesGrid");
-      grid.innerHTML = profiles.map(p => `
-        <div class="profile-card">
-          <button class="edit-btn" onclick="editProfile(${p.id})">✏️ Edit</button>
-          <div class="profile-pic">
-            ${p.picurl ? `<img src="${p.picurl}" alt="${p.name}">` : p.name[0].toUpperCase()}
-          </div>
-          <div class="profile-name">${p.name}</div>
-          <div class="button-row">
-            <a href="${p.url}" target="_blank" class="btn">View Profile</a>
-            <button class="btn" onclick="toggleReports(${p.id})">View Reports</button>
-          </div>
-          <div class="reports-panel" id="reports-${p.id}"></div>
-        </div>
-      `).join("");
-    }
+      grid.innerHTML = "";
 
-    async function editProfile(id) {
-      const newName = prompt("Enter new name:");
-      if (newName) {
-        await supabase.from("scammers").update({ name: newName }).eq("id", id);
-        loadProfiles();
+      for (const profile of profiles) {
+        const card = document.createElement("div");
+        card.className = "profile-card";
+
+        const pic = document.createElement("div");
+        pic.className = "profile-pic";
+        if (profile.picUrl) {
+          const img = document.createElement("img");
+          img.src = profile.picUrl;
+          img.alt = profile.name;
+          pic.appendChild(img);
+        } else {
+          pic.textContent = profile.name[0].toUpperCase();
+        }
+
+        const nameDiv = document.createElement("div");
+        nameDiv.className = "profile-name";
+        nameDiv.textContent = profile.name;
+
+        const editBtn = document.createElement("button");
+        editBtn.className = "edit-btn";
+        editBtn.textContent = "Edit";
+        editBtn.onclick = () => enableEditing(profile);
+
+        const buttonRow = document.createElement("div");
+        buttonRow.className = "button-row";
+
+        const profileBtn = document.createElement("a");
+        profileBtn.href = profile.url;
+        profileBtn.target = "_blank";
+        profileBtn.className = "btn";
+        profileBtn.textContent = "View Profile";
+
+        const reportsBtn = document.createElement("button");
+        reportsBtn.className = "btn";
+        reportsBtn.textContent = "View Reports";
+
+        const reportsPanel = document.createElement("div");
+        reportsPanel.className = "reports-panel";
+
+        reportsBtn.onclick = async () => {
+          if (reportsPanel.style.display === "flex") {
+            reportsPanel.style.display = "none";
+            return;
+          }
+          const reports = await loadReports(profile.id);
+          reportsPanel.innerHTML = reports
+            .map(r => `<div class="report-item">${r.text}</div>`)
+            .join("");
+          const form = document.createElement("div");
+          form.className = "add-report";
+          form.innerHTML = `
+            <textarea placeholder="Add a report..."></textarea>
+            <button>Submit</button>
+          `;
+          form.querySelector("button").onclick = async () => {
+            const text = form.querySelector("textarea").value;
+            await addReport(profile.id, text);
+          };
+          reportsPanel.appendChild(form);
+          reportsPanel.style.display = "flex";
+        };
+
+        buttonRow.appendChild(profileBtn);
+        buttonRow.appendChild(reportsBtn);
+
+        card.appendChild(editBtn);
+        card.appendChild(pic);
+        card.appendChild(nameDiv);
+        card.appendChild(buttonRow);
+        card.appendChild(reportsPanel);
+
+        grid.appendChild(card);
       }
     }
 
     loadProfiles();
+    document.getElementById("profileUrl").addEventListener("keypress", e => {
+      if (e.key === "Enter") addProfile();
+    });
   </script>
 </body>
 </html>
