@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>⚠️ Scammers ⚠️</title>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
@@ -11,7 +11,6 @@
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
       background: linear-gradient(135deg, #1a1a1a 0%, #4a0000 100%);
-      color: white;
       min-height: 100vh;
       padding: 20px;
     }
@@ -34,14 +33,11 @@
       padding: 25px;
       border-radius: 15px;
       margin-bottom: 30px;
-      border: 1px solid rgba(255, 51, 51, 0.3);
       box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255, 51, 51, 0.3);
     }
 
-    .input-group {
-      display: flex;
-      gap: 10px;
-    }
+    .input-group { display: flex; gap: 10px; }
 
     input[type="text"] {
       flex: 1;
@@ -53,9 +49,7 @@
       color: white;
     }
 
-    input[type="text"]::placeholder {
-      color: rgba(255, 255, 255, 0.5);
-    }
+    input[type="text"]::placeholder { color: rgba(255, 255, 255, 0.5); }
 
     input[type="text"]:focus {
       outline: none;
@@ -63,7 +57,7 @@
     }
 
     button {
-      padding: 12px 20px;
+      padding: 12px 24px;
       background: #ff3333;
       color: white;
       border: none;
@@ -71,52 +65,56 @@
       cursor: pointer;
       font-size: 16px;
       font-weight: 600;
-      transition: all 0.3s ease;
+      text-align: center;
+      width: 100%;
+      transition: background 0.3s;
     }
 
-    button:hover {
-      background: #cc0000;
-      transform: translateY(-1px);
-    }
+    button:hover { background: #cc0000; }
 
     .profiles-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
       gap: 25px;
+      margin-top: 20px;
     }
 
     .profile-card {
       background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 51, 51, 0.3);
+      backdrop-filter: blur(10px);
       border-radius: 15px;
       padding: 20px;
-      text-align: center;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
       position: relative;
-      transition: transform 0.3s ease;
+      text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid rgba(255, 51, 51, 0.2);
     }
 
     .profile-card:hover {
       transform: translateY(-5px);
       box-shadow: 0 10px 25px rgba(255, 51, 51, 0.3);
+      border-color: #ff3333;
     }
 
     .edit-btn {
       position: absolute;
       top: 10px;
       right: 10px;
-      background: rgba(255, 255, 255, 0.15);
-      border: none;
+      background: #ff3333;
       color: white;
-      padding: 6px 10px;
-      border-radius: 5px;
-      font-size: 14px;
+      border: none;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
       cursor: pointer;
-      transition: background 0.3s;
-    }
-
-    .edit-btn:hover {
-      background: rgba(255, 51, 51, 0.6);
+      font-size: 16px;
+      font-weight: bold;
+      line-height: 1;
     }
 
     .profile-pic {
@@ -128,6 +126,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      color: white;
       font-size: 48px;
       font-weight: bold;
       overflow: hidden;
@@ -143,135 +142,108 @@
     .profile-name {
       font-size: 18px;
       font-weight: 600;
+      color: #fff;
+      word-break: break-word;
       margin-bottom: 10px;
     }
 
-    .buttons {
+    .card-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .view-btn {
+      background: #ff3333;
+      color: #fff;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+      transition: background 0.3s;
+    }
+
+    .view-btn:hover {
+      background: #cc0000;
+    }
+
+    .modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
       display: flex;
       justify-content: center;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .card-btn {
-      flex: 1;
-      text-align: center;
-      padding: 10px;
-      background: #ff3333;
-      border-radius: 8px;
-      font-weight: 600;
-      color: white;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-
-    .card-btn:hover {
-      background: #cc0000;
-      transform: translateY(-1px);
-    }
-
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
       align-items: center;
-      justify-content: center;
-      z-index: 999;
+      visibility: hidden;
     }
+
+    .modal.active { visibility: visible; }
 
     .modal-content {
-      background: #1e1e1e;
-      border-radius: 12px;
-      max-width: 600px;
-      width: 100%;
+      background: #222;
       padding: 25px;
-      border: 1px solid rgba(255,51,51,0.3);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
-    }
-
-    .modal h2 {
-      color: #ff3333;
-      margin-bottom: 15px;
-      text-align: center;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 600px;
+      color: white;
+      max-height: 80vh;
+      overflow-y: auto;
     }
 
     textarea {
       width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 2px solid rgba(255,51,51,0.3);
-      background: rgba(0,0,0,0.3);
-      color: white;
-      min-height: 100px;
-      resize: vertical;
-      margin-bottom: 10px;
-    }
-
-    textarea:focus {
-      outline: none;
-      border-color: #ff3333;
-    }
-
-    .report-card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,51,51,0.3);
-      border-radius: 10px;
       padding: 10px;
-      margin-bottom: 10px;
-    }
-
-    .report-card p {
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    .timestamp {
-      font-size: 12px;
-      color: rgba(255,255,255,0.6);
+      border-radius: 8px;
+      border: none;
+      background: #333;
+      color: white;
+      resize: vertical;
+      min-height: 100px;
     }
 
     .close-btn {
       background: #ff3333;
       color: white;
       border: none;
-      padding: 8px 14px;
+      padding: 8px 16px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: 600;
-      display: block;
-      margin: 0 auto;
       margin-top: 10px;
-      transition: background 0.3s;
     }
 
-    .close-btn:hover {
-      background: #cc0000;
+    .report {
+      background: rgba(255,255,255,0.08);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 15px;
     }
+
   </style>
 </head>
 <body>
   <div class="container">
     <h1>⚠️ SCAMMERS ⚠️</h1>
-
     <div class="admin-section">
       <div class="input-group">
         <input type="text" id="profileUrl" placeholder="Paste Facebook profile URL...">
         <button onclick="addProfile()">Add</button>
       </div>
     </div>
-
     <div class="profiles-grid" id="profilesGrid"></div>
   </div>
 
-  <!-- Reports Modal -->
-  <div id="reportsModal" class="modal">
+  <div class="modal" id="reportsModal">
     <div class="modal-content">
-      <h2>Reports</h2>
+      <h2 id="reportsTitle"></h2>
       <div id="reportsList"></div>
-      <textarea id="newReportText" placeholder="Add your report..."></textarea>
-      <button onclick="submitReport()">Submit Report</button>
+      <textarea id="newReport" placeholder="Add your report..."></textarea>
+      <button class="view-btn" onclick="submitReport()">Submit Report</button>
       <button class="close-btn" onclick="closeModal()">Close</button>
     </div>
   </div>
@@ -281,153 +253,103 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3lkanF2YWtqaXJpc2VrdWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MjU1MTUsImV4cCI6MjA3NTMwMTUxNX0.eKtrwpGJuZcfnm2MfOmRlwrunSy6kvXQJqfKJ6DzuG4";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let currentScammerId = null;
+    let currentProfileId = null;
 
     async function loadProfiles() {
-      const { data, error } = await supabase.from("scammers").select("*").order("id", { ascending: false });
+      const { data, error } = await supabase.from('scammers').select('*').order('id', { ascending: false });
       if (error) console.error(error);
       else renderProfiles(data);
     }
 
     function extractNameFromUrl(url) {
       try {
-        const urlObj = new URL(url);
-        const path = urlObj.pathname;
-        if (path && path !== "/" && !path.includes("profile.php")) {
-          let name = path.replace(/^\//, "").split("/")[0];
-          name = decodeURIComponent(name);
-          name = name.replace(/[._-]/g, " ")
-                     .split(" ")
-                     .map(w => w.charAt(0).toUpperCase() + w.slice(1))
-                     .join(" ");
-          return name;
+        const u = new URL(url);
+        const p = u.pathname.replace('/', '').split('/')[0];
+        if (p && !p.includes('profile.php')) {
+          return p.replace(/[._-]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
         }
-        const params = new URLSearchParams(urlObj.search);
-        const id = params.get("id");
-        return id ? `User ${id}` : "Facebook User";
-      } catch {
-        return "Facebook User";
-      }
+        const id = new URLSearchParams(u.search).get('id');
+        return id ? `User ${id}` : 'Facebook User';
+      } catch { return 'Facebook User'; }
     }
 
     function extractProfilePicUrl(url) {
       try {
-        const urlObj = new URL(url);
-        const path = urlObj.pathname;
-        let username = "";
-        if (path && path !== "/" && !path.includes("profile.php")) {
-          username = path.replace(/^\//, "").split("/")[0];
-        } else {
-          const params = new URLSearchParams(urlObj.search);
-          const id = params.get("id");
-          if (id) username = id;
-        }
-        return username ? `https://graph.facebook.com/${username}/picture?type=large` : null;
-      } catch {
-        return null;
-      }
+        const u = new URL(url);
+        const p = u.pathname.replace('/', '').split('/')[0];
+        if (p && !p.includes('profile.php')) return `https://graph.facebook.com/${p}/picture?type=large`;
+        const id = new URLSearchParams(u.search).get('id');
+        return id ? `https://graph.facebook.com/${id}/picture?type=large` : null;
+      } catch { return null; }
     }
 
     async function addProfile() {
-      const input = document.getElementById("profileUrl");
+      const input = document.getElementById('profileUrl');
       const url = input.value.trim();
-      if (!url) return alert("Enter a Facebook profile URL");
-      if (!url.includes("facebook.com") && !url.includes("fb.com"))
-        return alert("Not a valid Facebook URL");
+      if (!url) return alert('Enter a Facebook profile URL');
+      const fullUrl = url.startsWith('http') ? url : 'https://' + url;
 
-      const fullUrl = url.startsWith("http") ? url : "https://" + url;
       const name = extractNameFromUrl(fullUrl);
       const picUrl = extractProfilePicUrl(fullUrl);
 
-      const { error } = await supabase.from("scammers").insert([{ name, url: fullUrl, picUrl }]);
+      const { error } = await supabase.from('scammers').insert([{ name, url: fullUrl, picUrl }]);
       if (error) {
         console.error(error);
-        alert("Failed to add profile.");
+        alert('Failed to add profile.');
       } else {
-        input.value = "";
+        input.value = '';
         loadProfiles();
       }
     }
 
     function renderProfiles(profiles) {
-      const grid = document.getElementById("profilesGrid");
+      const grid = document.getElementById('profilesGrid');
       grid.innerHTML = profiles.map(p => `
         <div class="profile-card">
-          <button class="edit-btn" onclick="editProfile(${p.id})">✏️</button>
+          <button class="edit-btn" onclick="editProfile(${p.id})">✎</button>
           <div class="profile-pic">
-            ${p.picUrl ? `<img src="${p.picUrl}" alt="${p.name}" onerror="this.parentElement.innerHTML='${p.name[0]}'">` : p.name[0]}
+            ${p.picurl ? `<img src="${p.picurl}" alt="${p.name}">` : p.name[0]}
           </div>
           <div class="profile-name">${p.name}</div>
-          <div class="buttons">
-            <a href="${p.url}" target="_blank" class="card-btn">View Profile</a>
-            <button class="card-btn" onclick="openReports(${p.id})">View Reports</button>
+          <div class="card-buttons">
+            <button class="view-btn" onclick="window.open('${p.url}', '_blank')">View Profile</button>
+            <button class="view-btn" onclick="openReports(${p.id}, '${p.name}')">View Reports</button>
           </div>
         </div>
-      `).join("");
+      `).join('');
     }
 
-    async function editProfile(id) {
-      const { data } = await supabase.from("scammers").select("*").eq("id", id).single();
-      const newName = prompt("Edit name:", data.name);
-      const newPicUrl = prompt("Edit image URL:", data.picUrl || "");
-      if (newName) {
-        await supabase.from("scammers").update({ name: newName, picUrl: newPicUrl }).eq("id", id);
-        loadProfiles();
+    async function openReports(profileId, name) {
+      currentProfileId = profileId;
+      document.getElementById('reportsTitle').textContent = name;
+      document.getElementById('reportsModal').classList.add('active');
+
+      const { data, error } = await supabase.from('scam_reports').select('*').eq('scammer_id', profileId);
+      if (error) console.error(error);
+      else {
+        const list = document.getElementById('reportsList');
+        list.innerHTML = data.map(r => `<div class="report">${r.report_text}</div>`).join('') || '<p>No reports yet.</p>';
       }
-    }
-
-    async function openReports(id) {
-      currentScammerId = id;
-      document.getElementById("reportsModal").style.display = "flex";
-      loadReports();
-    }
-
-    async function closeModal() {
-      document.getElementById("reportsModal").style.display = "none";
-      document.getElementById("reportsList").innerHTML = "";
-      document.getElementById("newReportText").value = "";
-    }
-
-    async function loadReports() {
-      const { data, error } = await supabase
-        .from("reports")
-        .select("*")
-        .eq("scammer_id", currentScammerId)
-        .order("created_at", { ascending: false });
-
-      const list = document.getElementById("reportsList");
-      if (error || !data) {
-        list.innerHTML = "<p>Failed to load reports.</p>";
-        return;
-      }
-
-      list.innerHTML = data.length
-        ? data.map(r => `
-          <div class="report-card">
-            <p>${r.description}</p>
-            <div class="timestamp">${new Date(r.created_at).toLocaleString()}</div>
-          </div>
-        `).join("")
-        : "<p>No reports yet. Be the first to add one.</p>";
     }
 
     async function submitReport() {
-      const text = document.getElementById("newReportText").value.trim();
-      if (!text) return alert("Please write a report before submitting.");
-      const { error } = await supabase.from("reports").insert([{ scammer_id: currentScammerId, description: text }]);
+      const text = document.getElementById('newReport').value.trim();
+      if (!text) return alert('Enter a report before submitting.');
+      const { error } = await supabase.from('scam_reports').insert([{ scammer_id: currentProfileId, report_text: text }]);
       if (error) {
         console.error(error);
-        alert("Failed to submit report.");
+        alert('Failed to submit report.');
       } else {
-        document.getElementById("newReportText").value = "";
-        loadReports();
+        document.getElementById('newReport').value = '';
+        openReports(currentProfileId, document.getElementById('reportsTitle').textContent);
       }
     }
 
+    function closeModal() {
+      document.getElementById('reportsModal').classList.remove('active');
+    }
+
     loadProfiles();
-    document.getElementById("profileUrl").addEventListener("keypress", e => {
-      if (e.key === "Enter") addProfile();
-    });
   </script>
 </body>
 </html>
