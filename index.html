@@ -33,7 +33,7 @@
       gap: 10px;
       align-items: center;
     }
-    input[type="text"], input[type="file"] {
+    input[type="text"], input[type="file"], textarea {
       flex: 1;
       padding: 12px;
       border: 2px solid rgba(255,51,51,0.3);
@@ -41,8 +41,9 @@
       font-size: 16px;
       background: rgba(0,0,0,0.3);
       color: white;
+      resize: none;
     }
-    input:focus { outline: none; border-color: #ff3333; }
+    input:focus, textarea:focus { outline: none; border-color: #ff3333; }
     button {
       padding: 12px 24px;
       border-radius: 8px;
@@ -68,7 +69,7 @@
     }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px,1fr));
+      grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
       gap: 20px;
     }
     .card {
@@ -78,8 +79,13 @@
       text-align: center;
       padding: 20px;
       transition: 0.3s;
+      position: relative;
     }
-    .card:hover { transform: translateY(-5px); border-color: #ff3333; box-shadow: 0 0 15px rgba(255,51,51,0.3); }
+    .card:hover {
+      transform: translateY(-5px);
+      border-color: #ff3333;
+      box-shadow: 0 0 15px rgba(255,51,51,0.3);
+    }
     .card img {
       width: 100px;
       height: 100px;
@@ -88,11 +94,15 @@
       object-fit: cover;
       margin-bottom: 10px;
     }
-    .edit-btns {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
+    .desc-box {
+      background: rgba(255,255,255,0.08);
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 8px;
+      font-size: 14px;
+      color: #ddd;
+      text-align: left;
+      white-space: pre-wrap;
     }
   </style>
 </head>
@@ -110,6 +120,7 @@
         <input type="text" id="nameInput" placeholder="Name" />
         <input type="file" id="fileInput" accept="image/*" />
       </div>
+      <textarea id="descInput" placeholder="Describe how this person scammed..." rows="3"></textarea>
       <button onclick="saveProfile()">Save</button>
     </div>
   </div>
@@ -121,11 +132,8 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3lkanF2YWtqaXJpc2VrdWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MjU1MTUsImV4cCI6MjA3NTMwMTUxNX0.eKtrwpGJuZcfnm2MfOmRlwrunSy6kvXQJqfKJ6DzuG4";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let tempName = "";
-    let tempPic = "";
-    let tempUrl = "";
+    let tempName = "", tempPic = "", tempUrl = "";
 
-    // --- Extract name ---
     function extractNameFromUrl(url) {
       try {
         const u = new URL(url);
@@ -143,7 +151,6 @@
       } catch { return "Facebook User"; }
     }
 
-    // --- Extract Facebook pic URL ---
     function extractPicFromUrl(url) {
       try {
         const u = new URL(url);
@@ -158,7 +165,6 @@
       } catch { return null; }
     }
 
-    // --- Fetch Facebook info ---
     async function fetchFacebook() {
       const fbUrl = document.getElementById("fbUrl").value.trim();
       if (!fbUrl) return alert("Paste a Facebook profile URL first!");
@@ -170,12 +176,13 @@
 
       document.getElementById("previewImg").src = tempPic || "";
       document.getElementById("nameInput").value = tempName;
+      document.getElementById("descInput").value = "";
       document.getElementById("previewSection").style.display = "block";
     }
 
-    // --- Save profile to Supabase ---
     async function saveProfile() {
       const name = document.getElementById("nameInput").value.trim() || tempName;
+      const desc = document.getElementById("descInput").value.trim();
       const file = document.getElementById("fileInput").files[0];
       let picUrl = tempPic;
 
@@ -191,7 +198,7 @@
         picUrl = urlData.publicUrl;
       }
 
-      const { error } = await supabase.from("scammers").insert([{ name, url: tempUrl, picUrl }]);
+      const { error } = await supabase.from("scammers").insert([{ name, url: tempUrl, picUrl, description: desc }]);
       if (error) alert("Error: " + error.message);
       else {
         alert("Profile added!");
@@ -201,7 +208,6 @@
       }
     }
 
-    // --- Load and render profiles ---
     async function loadProfiles() {
       const { data, error } = await supabase.from("scammers").select("*").order("id", { ascending: false });
       if (error) return console.error(error);
@@ -209,8 +215,9 @@
       grid.innerHTML = data.map(p => `
         <div class="card">
           <img src="${p.picUrl || "https://via.placeholder.com/100"}" alt="${p.name}" />
-          <div>${p.name}</div>
+          <div style="font-weight:600;">${p.name}</div>
           ${p.url ? `<a href="${p.url}" target="_blank" style="color:#ff9999;text-decoration:none;">View Profile</a>` : ""}
+          ${p.description ? `<div class="desc-box">${p.description}</div>` : ""}
         </div>
       `).join("");
     }
