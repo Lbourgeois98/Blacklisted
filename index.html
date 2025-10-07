@@ -1,266 +1,314 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>⚠️ Scammers ⚠️</title>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
   <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: system-ui, sans-serif;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: linear-gradient(135deg, #1a1a1a 0%, #4a0000 100%);
       color: white;
       min-height: 100vh;
       padding: 20px;
     }
+
+    .container { max-width: 1200px; margin: 0 auto; }
+
     h1 {
-      text-align: center;
       color: #ff3333;
+      text-align: center;
+      margin-bottom: 40px;
       font-size: 3em;
-      margin-bottom: 30px;
       text-shadow: 3px 3px 6px rgba(0,0,0,0.5);
+      font-weight: 900;
+      letter-spacing: 2px;
     }
-    .admin {
-      background: rgba(255,255,255,0.05);
-      padding: 20px;
+
+    .admin-section {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      padding: 25px;
       border-radius: 15px;
-      border: 1px solid rgba(255,51,51,0.3);
       margin-bottom: 30px;
+      border: 1px solid rgba(255, 51, 51, 0.3);
     }
-    .inputs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-    input[type="text"], input[type="file"], textarea {
+
+    .input-group { display: flex; gap: 10px; }
+
+    input[type="text"] {
       flex: 1;
       padding: 12px;
-      border: 2px solid rgba(255,51,51,0.3);
+      border: 2px solid rgba(255, 51, 51, 0.3);
       border-radius: 8px;
       font-size: 16px;
-      background: rgba(0,0,0,0.3);
+      background: rgba(0, 0, 0, 0.3);
       color: white;
-      resize: vertical;
     }
-    textarea { min-height: 80px; }
-    input:focus, textarea:focus { outline: none; border-color: #ff3333; }
+
     button {
       padding: 12px 24px;
-      border-radius: 8px;
-      border: none;
       background: #ff3333;
       color: white;
-      font-weight: 600;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      transition: 0.3s;
+      font-size: 16px;
+      font-weight: 600;
+      transition: background 0.3s, transform 0.2s;
     }
-    button:hover { background: #cc0000; box-shadow: 0 0 15px #ff3333; }
-    .preview {
-      text-align: center;
-      margin-top: 15px;
+
+    button:hover {
+      background: #cc0000;
+      transform: scale(1.05);
     }
-    .preview img {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #ff3333;
-      margin-bottom: 10px;
-    }
-    .grid {
+
+    .profiles-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px,1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 25px;
     }
-    .card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,51,51,0.3);
-      border-radius: 15px;
+
+    .profile-card {
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
       text-align: center;
       padding: 20px;
-      transition: 0.3s;
-      position: relative;
+      transition: transform 0.3s;
     }
-    .card:hover {
-      transform: translateY(-5px);
-      border-color: #ff3333;
-      box-shadow: 0 0 15px rgba(255,51,51,0.3);
-    }
-    .card img {
-      width: 100px;
-      height: 100px;
+
+    .profile-card:hover { transform: translateY(-5px); }
+
+    .profile-pic {
+      width: 130px;
+      height: 130px;
       border-radius: 50%;
-      border: 2px solid #ff3333;
+      overflow: hidden;
+      border: 3px solid #ff3333;
+      margin: 0 auto 15px;
+      background: linear-gradient(135deg, #ff3333, #cc0000);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 40px;
+      font-weight: bold;
+    }
+
+    .profile-pic img {
+      width: 100%;
+      height: 100%;
       object-fit: cover;
+    }
+
+    .profile-name {
+      font-size: 20px;
+      font-weight: 700;
       margin-bottom: 10px;
     }
-    .reports {
-      background: rgba(255,255,255,0.08);
+
+    .button-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+
+    .view-btn {
+      display: inline-block;
+      padding: 10px 18px;
+      background: #ff3333;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+
+    .view-btn:hover { background: #cc0000; }
+
+    .reports-section {
+      display: none;
+      background: rgba(0, 0, 0, 0.3);
       border-radius: 10px;
-      margin-top: 10px;
       padding: 10px;
+      margin-top: 10px;
       text-align: left;
-      max-height: 250px;
+      max-height: 200px;
       overflow-y: auto;
     }
+
     .report {
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      padding: 5px 0;
+      background: rgba(255, 51, 51, 0.1);
+      border-left: 3px solid #ff3333;
+      padding: 8px 10px;
+      margin-bottom: 8px;
+      border-radius: 6px;
       font-size: 14px;
-      white-space: pre-wrap;
+      line-height: 1.4;
     }
-    .report:last-child { border-bottom: none; }
+
     .add-report {
       margin-top: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
     }
-    .add-report textarea {
+
+    textarea {
       width: 100%;
       min-height: 60px;
+      border-radius: 6px;
+      border: none;
+      padding: 8px;
+      resize: vertical;
+      background: rgba(255, 255, 255, 0.1);
+      color: white;
+      font-size: 14px;
     }
+
+    textarea:focus { outline: 2px solid #ff3333; }
   </style>
 </head>
 <body>
-  <h1>⚠️ SCAMMERS ⚠️</h1>
+  <div class="container">
+    <h1>⚠️ SCAMMERS ⚠️</h1>
 
-  <div class="admin">
-    <div class="inputs">
-      <input type="text" id="fbUrl" placeholder="Paste Facebook profile URL..." />
-      <button onclick="fetchFacebook()">Fetch</button>
-    </div>
-    <div class="preview" id="previewSection" style="display:none;">
-      <img id="previewImg" src="" alt="Preview" />
-      <div>
-        <input type="text" id="nameInput" placeholder="Name" />
-        <input type="file" id="fileInput" accept="image/*" />
+    <div class="admin-section">
+      <div class="input-group">
+        <input type="text" id="profileUrl" placeholder="Paste Facebook profile URL...">
+        <button onclick="addProfile()">Add</button>
       </div>
-      <button onclick="saveProfile()">Save Scammer</button>
     </div>
-  </div>
 
-  <div class="grid" id="profilesGrid"></div>
+    <div class="profiles-grid" id="profilesGrid"></div>
+  </div>
 
   <script>
     const SUPABASE_URL = "https://jikydjqvakjirisekudj.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3lkanF2YWtqaXJpc2VrdWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MjU1MTUsImV4cCI6MjA3NTMwMTUxNX0.eKtrwpGJuZcfnm2MfOmRlwrunSy6kvXQJqfKJ6DzuG4";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let tempName = "", tempPic = "", tempUrl = "";
+    async function loadProfiles() {
+      const { data: scammers, error } = await supabase.from("scammers").select("*").order("id", { ascending: false });
+      if (error) console.error(error);
+      else renderProfiles(scammers);
+    }
 
     function extractNameFromUrl(url) {
       try {
-        const u = new URL(url);
-        const path = u.pathname.replace(/^\/|\/$/g, "");
-        if (path && !path.includes("profile.php")) {
-          return path
-            .split("/")[0]
-            .replace(/[._-]/g, " ")
+        const urlObj = new URL(url);
+        const pathname = urlObj.pathname;
+        if (pathname && pathname !== "/" && !pathname.includes("profile.php")) {
+          let name = pathname.replace(/^\//, "").split("/")[0];
+          name = decodeURIComponent(name).replace(/[._-]/g, " ")
             .split(" ")
             .map(w => w.charAt(0).toUpperCase() + w.slice(1))
             .join(" ");
+          return name;
         }
-        const id = new URLSearchParams(u.search).get("id");
+        const params = new URLSearchParams(urlObj.search);
+        const id = params.get("id");
         return id ? `User ${id}` : "Facebook User";
-      } catch { return "Facebook User"; }
+      } catch {
+        return "Facebook User";
+      }
     }
 
-    function extractPicFromUrl(url) {
+    function extractProfilePicUrl(url) {
       try {
-        const u = new URL(url);
-        const path = u.pathname.replace(/^\/|\/$/g, "");
+        const urlObj = new URL(url);
         let username = "";
-        if (path && !path.includes("profile.php")) username = path.split("/")[0];
-        else {
-          const id = new URLSearchParams(u.search).get("id");
+        const pathname = urlObj.pathname;
+        if (pathname && pathname !== "/" && !pathname.includes("profile.php")) {
+          username = pathname.replace(/^\//, "").split("/")[0];
+        } else {
+          const params = new URLSearchParams(urlObj.search);
+          const id = params.get("id");
           if (id) username = id;
         }
         return username ? `https://graph.facebook.com/${username}/picture?type=large` : null;
-      } catch { return null; }
-    }
-
-    async function fetchFacebook() {
-      const fbUrl = document.getElementById("fbUrl").value.trim();
-      if (!fbUrl) return alert("Paste a Facebook profile URL first!");
-
-      const fixedUrl = fbUrl.startsWith("http") ? fbUrl : "https://" + fbUrl;
-      tempUrl = fixedUrl;
-      tempName = extractNameFromUrl(fixedUrl);
-      tempPic = extractPicFromUrl(fixedUrl);
-
-      document.getElementById("previewImg").src = tempPic || "";
-      document.getElementById("nameInput").value = tempName;
-      document.getElementById("previewSection").style.display = "block";
-    }
-
-    async function saveProfile() {
-      const name = document.getElementById("nameInput").value.trim() || tempName;
-      const file = document.getElementById("fileInput").files[0];
-      let picUrl = tempPic;
-
-      if (file) {
-        const filePath = `${Date.now()}_${file.name}`;
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from("profile-images")
-          .upload(filePath, file);
-        if (uploadError) return alert("Upload failed: " + uploadError.message);
-        const { data: urlData } = supabase.storage
-          .from("profile-images")
-          .getPublicUrl(uploadData.path);
-        picUrl = urlData.publicUrl;
+      } catch {
+        return null;
       }
+    }
 
-      const { data, error } = await supabase
-        .from("scammers")
-        .insert([{ name, url: tempUrl, picUrl }])
-        .select();
-      if (error) alert("Error: " + error.message);
+    async function addProfile() {
+      const input = document.getElementById("profileUrl");
+      const url = input.value.trim();
+      if (!url) return alert("Enter a Facebook profile URL");
+      if (!url.includes("facebook.com") && !url.includes("fb.com")) return alert("Not a valid Facebook URL");
+
+      const fullUrl = url.startsWith("http") ? url : "https://" + url;
+      const name = extractNameFromUrl(fullUrl);
+      const picUrl = extractProfilePicUrl(fullUrl);
+
+      const { error } = await supabase.from("scammers").insert([{ name, url: fullUrl, picUrl }]);
+      if (error) console.error(error);
       else {
-        alert("Profile added!");
-        document.getElementById("fbUrl").value = "";
-        document.getElementById("previewSection").style.display = "none";
+        input.value = "";
         loadProfiles();
       }
     }
 
-    async function addReport(scammerId) {
-      const textarea = document.getElementById(`report-${scammerId}`);
-      const text = textarea.value.trim();
-      if (!text) return alert("Enter how they scammed first!");
-      const { error } = await supabase
-        .from("scam_reports")
-        .insert([{ scammer_id: scammerId, description: text }]);
-      if (error) return alert("Error adding report: " + error.message);
-      textarea.value = "";
-      loadProfiles();
-    }
-
-    async function loadProfiles() {
-      const { data: scammers, error } = await supabase.from("scammers").select("*").order("id", { ascending: false });
-      if (error) return console.error(error);
-
-      const { data: reports } = await supabase.from("scam_reports").select("*").order("created_at", { ascending: false });
-      const reportsByScammer = {};
-      for (const r of reports || []) {
-        if (!reportsByScammer[r.scammer_id]) reportsByScammer[r.scammer_id] = [];
-        reportsByScammer[r.scammer_id].push(r);
+    async function toggleReports(id) {
+      const section = document.getElementById(`reports-${id}`);
+      if (section.style.display === "block") {
+        section.style.display = "none";
+        return;
       }
 
+      // fetch reports
+      const { data: reports, error } = await supabase
+        .from("reports")
+        .select("*")
+        .eq("scammer_id", id)
+        .order("created_at", { ascending: false });
+      if (error) console.error(error);
+
+      section.innerHTML = `
+        ${(reports && reports.length)
+          ? reports.map(r => `<div class="report">${r.text}</div>`).join("")
+          : "<div class='report'>No reports yet.</div>"}
+        <div class="add-report">
+          <textarea id="reportText-${id}" placeholder="Add a new report..."></textarea>
+          <button onclick="submitReport(${id})">Submit Report</button>
+        </div>
+      `;
+      section.style.display = "block";
+    }
+
+    async function submitReport(id) {
+      const textArea = document.getElementById(`reportText-${id}`);
+      const text = textArea.value.trim();
+      if (!text) return alert("Please write something first.");
+
+      const { error } = await supabase.from("reports").insert([{ scammer_id: id, text }]);
+      if (error) {
+        console.error(error);
+        alert("Failed to submit report.");
+      } else {
+        textArea.value = "";
+        toggleReports(id); // refresh list
+      }
+    }
+
+    function renderProfiles(scammers) {
       const grid = document.getElementById("profilesGrid");
-      grid.innerHTML = scammers.map(p => `
-        <div class="card">
-          <img src="${p.picUrl || "https://via.placeholder.com/100"}" alt="${p.name}" />
-          <div style="font-weight:600;">${p.name}</div>
-          ${p.url ? `<a href="${p.url}" target="_blank" style="color:#ff9999;text-decoration:none;">View Profile</a>` : ""}
-          <div class="reports">
-            ${(reportsByScammer[p.id] || []).map(r => `<div class="report">${r.description}</div>`).join("")}
+      grid.innerHTML = scammers.map(profile => `
+        <div class="profile-card">
+          <div class="profile-pic">
+            ${profile.picUrl
+              ? `<img src="${profile.picUrl}" alt="${profile.name}" onerror="this.style.display='none'">`
+              : profile.name[0].toUpperCase()}
           </div>
-          <div class="add-report">
-            <textarea id="report-${p.id}" placeholder="Add your report about this scammer..."></textarea>
-            <button onclick="addReport(${p.id})">Add Report</button>
+          <div class="profile-name">${profile.name}</div>
+          <div class="button-group">
+            <a href="${profile.url}" target="_blank" class="view-btn">View Profile</a>
+            <button class="view-btn" onclick="toggleReports(${profile.id})">View Reports</button>
           </div>
+          <div id="reports-${profile.id}" class="reports-section"></div>
         </div>
       `).join("");
     }
