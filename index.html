@@ -147,7 +147,6 @@
       padding: 10px;
       border-bottom: 1px solid rgba(255, 51, 51, 0.2);
     }
-
     .report:last-child { border-bottom: none; }
 
     textarea {
@@ -159,6 +158,38 @@
       color: #fff;
       resize: vertical;
       margin-top: 10px;
+    }
+
+    /* 🔶 Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: #1f1f1f;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      border: 1px solid #ff3333;
+    }
+
+    .modal-content input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border: 2px solid rgba(255, 51, 51, 0.3);
+      background: rgba(0, 0, 0, 0.3);
+      color: white;
     }
   </style>
 </head>
@@ -174,11 +205,26 @@
     <div class="profiles-grid" id="profilesGrid"></div>
   </div>
 
+  <!-- 🔶 Modal -->
+  <div id="editModal" class="modal">
+    <div class="modal-content">
+      <h3>Edit Profile</h3>
+      <input type="text" id="editName" placeholder="New name..." />
+      <input type="file" id="editImage" accept="image/*" />
+      <div style="margin-top: 15px; display:flex; gap:10px; justify-content:center;">
+        <button onclick="saveEdit()">Save</button>
+        <button onclick="closeModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const SUPABASE_URL = "https://jikydjqvakjirisekudj.supabase.co";
     const SUPABASE_KEY =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3lkanF2YWtqaXJpc2VrdWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MjU1MTUsImV4cCI6MjA3NTMwMTUxNX0.eKtrwpGJuZcfnm2MfOmRlwrunSy6kvXQJqfKJ6DzuG4";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let editingId = null;
 
     function extractNameFromUrl(url) {
       try {
@@ -296,7 +342,7 @@
       const grid = document.getElementById("profilesGrid");
       grid.innerHTML = profiles.map(profile => `
         <div class="profile-card">
-          <button class="edit-btn" onclick="editProfile(${profile.id})">Edit</button>
+          <button class="edit-btn" onclick="openModal(${profile.id}, '${profile.name}', '${profile.picUrl || ''}')">Edit</button>
           <div class="profile-pic">
             ${profile.picUrl
               ? `<img src="${profile.picUrl}" alt="${profile.name}" onerror="this.style.display='none'">`
@@ -311,17 +357,46 @@
         </div>`).join("");
     }
 
-    async function editProfile(id) {
-      const name = prompt("Enter new name:");
-      const picUrl = prompt("Enter new image URL:");
-      if (!name && !picUrl) return;
+    // 🔶 Modal Logic
+    function openModal(id, name, picUrl) {
+      editingId = id;
+      document.getElementById("editName").value = name;
+      document.getElementById("editImage").value = "";
+      document.getElementById("editModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("editModal").style.display = "none";
+      editingId = null;
+    }
+
+    async function saveEdit() {
+      const name = document.getElementById("editName").value.trim();
+      const fileInput = document.getElementById("editImage");
+      let picUrl = null;
+
+      if (fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        const filePath = `${Date.now()}_${file.name}`;
+        const { error: uploadError } = await supabase.storage
+          .from("profile_images")
+          .upload(filePath, file, { upsert: true });
+        if (uploadError) return alert("Image upload failed: " + uploadError.message);
+
+        const { data } = supabase.storage.from("profile_images").getPublicUrl(filePath);
+        picUrl = data.publicUrl;
+      }
+
       const updates = {};
       if (name) updates.name = name;
       if (picUrl) updates.picUrl = picUrl;
 
-      const { error } = await supabase.from("scammers").update(updates).eq("id", id);
-      if (error) alert("Failed to update profile: " + error.message);
-      else loadProfiles();
+      const { error } = await supabase.from("scammers").update(updates).eq("id", editingId);
+      if (error) alert("Failed to update: " + error.message);
+      else {
+        closeModal();
+        loadProfiles();
+      }
     }
 
     document.getElementById("profileUrl").addEventListener("keypress", e => {
