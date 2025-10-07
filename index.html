@@ -1,430 +1,416 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>⚠️ Scammers ⚠️</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Scammers Dashboard</title>
   <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
+    * { box-sizing: border-box; margin:0; padding:0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell;
-      background: linear-gradient(135deg, #1a1a1a 0%, #4a0000 100%);
-      color: white;
-      padding: 30px;
-      min-height: 100vh;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      background: linear-gradient(180deg,#120000 0%, #000 100%);
+      color: #fff;
+      padding: 28px;
     }
+    .container { max-width:1200px; margin:0 auto; }
 
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
+    h1 { text-align:center; color:#ff3333; font-size:30px; margin-bottom:18px; }
+
+    /* Top input (exact style restored) */
+    .admin {
+      background: rgba(255,255,255,0.04);
+      padding:18px;
+      border-radius:12px;
+      border:1px solid rgba(255,51,51,0.18);
+      margin-bottom:20px;
+      display:flex;
+      gap:10px;
+      align-items:center;
     }
-
-    h1 {
-      text-align: center;
-      color: #ff3333;
-      margin-bottom: 30px;
-      font-size: 3em;
-      text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.6);
-      font-weight: 900;
-      letter-spacing: 2px;
+    .admin input[type="text"] {
+      flex:1;
+      padding:10px 12px;
+      border-radius:8px;
+      border:2px solid rgba(255,51,51,0.18);
+      background:rgba(0,0,0,0.35);
+      color:#fff;
+      font-size:15px;
     }
-
-    .admin-section {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
-      padding: 25px;
-      border-radius: 15px;
-      margin-bottom: 30px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 51, 51, 0.3);
+    .admin button {
+      padding:10px 16px;
+      background:#ff3333;
+      color:#fff;
+      border:none;
+      border-radius:8px;
+      font-weight:700;
+      cursor:pointer;
+      transition: all 0.18s;
+      box-shadow:0 0 0 rgba(0,0,0,0);
     }
+    .admin button:hover { transform:translateY(-2px); box-shadow:0 10px 30px rgba(255,51,51,0.12); }
 
-    .input-group {
-      display: flex;
-      gap: 10px;
+    /* Grid / Cards */
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px,1fr));
+      gap:18px;
     }
-
-    input[type="text"] {
-      flex: 1;
-      padding: 12px;
-      border: 2px solid rgba(255, 51, 51, 0.3);
-      border-radius: 8px;
-      font-size: 16px;
-      background: rgba(0, 0, 0, 0.3);
-      color: white;
+    .card {
+      background: rgba(255,255,255,0.04);
+      padding:16px;
+      border-radius:12px;
+      border:1px solid rgba(255,51,51,0.12);
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      position:relative;
+      min-height: 320px;
     }
+    .card:hover { box-shadow: 0 18px 40px rgba(0,0,0,0.6); transform:translateY(-6px); }
 
-    input[type="text"]::placeholder { color: rgba(255, 255, 255, 0.5); }
-
-    input[type="text"]:focus {
-      outline: none;
-      border-color: #ff3333;
+    .edit-top {
+      position:absolute; top:10px; right:10px;
     }
-
-    button {
-      padding: 12px 24px;
-      background: #ff3333;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      font-weight: 600;
-      transition: all 0.3s ease;
+    .edit-top button {
+      background: rgba(255,51,51,0.95);
+      color:#fff; border:none; padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:700;
+      transition: all .12s;
     }
+    .edit-top button:hover { transform:scale(1.05); box-shadow:0 8px 20px rgba(255,51,51,0.12); }
 
-    button:hover {
-      background: #cc0000;
-      transform: translateY(-2px);
-      box-shadow: 0 0 10px #ff3333;
+    .avatar {
+      width:120px; height:120px; border-radius:50%; overflow:hidden;
+      margin:0 auto; display:flex; align-items:center; justify-content:center;
+      background:linear-gradient(135deg,#ff3b3b,#cc0000);
+      color:#fff; font-weight:800; font-size:40px;
+      border:3px solid rgba(255,59,59,0.28);
     }
+    .avatar img { width:100%; height:100%; object-fit:cover; display:block; }
 
-    .profiles-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 25px;
-    }
+    .name { text-align:center; font-weight:800; font-size:18px; }
 
-    .profile-card {
-      position: relative;
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(255, 51, 51, 0.2);
-      border-radius: 15px;
-      backdrop-filter: blur(10px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      transition: transform 0.3s, box-shadow 0.3s;
-    }
-
-    .profile-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(255, 51, 51, 0.3);
-      border-color: #ff3333;
-    }
-
-    .edit-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(255, 51, 51, 0.9);
-      border: none;
-      color: white;
-      font-size: 14px;
-      padding: 6px 10px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .edit-btn:hover {
-      background: #ff0000;
-      transform: scale(1.05);
-      box-shadow: 0 0 10px #ff3333;
-    }
-
-    .profile-pic {
-      width: 130px;
-      height: 130px;
-      border-radius: 50%;
-      overflow: hidden;
-      background: linear-gradient(135deg, #ff3333, #cc0000);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 50px;
-      font-weight: bold;
-      margin-bottom: 15px;
-      border: 3px solid rgba(255, 51, 51, 0.4);
-    }
-
-    .profile-pic img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .profile-name {
-      font-size: 18px;
-      font-weight: 700;
-      text-align: center;
-      margin-bottom: 20px;
-      color: white;
-    }
+    .spacer { flex:1; } /* keeps buttons bottom-aligned */
 
     .button-row {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      margin-top: auto;
+      display:flex; gap:10px; margin-top:8px;
     }
-
-    .btn {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 45px;
-      border: 2px solid #ff3333;
-      color: #ff3333;
-      background: transparent;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      text-decoration: none;
-      font-size: 15px;
-      transition: all 0.25s ease;
-      text-align: center;
+    .button-row .btn {
+      flex:1; height:44px; display:flex; align-items:center; justify-content:center;
+      border-radius:8px; border:2px solid #ff3333; color:#ff3333; background:transparent; font-weight:700;
+      cursor:pointer; text-decoration:none;
+      transition: all .18s;
     }
-
-    .btn:hover {
-      background: #ff3333;
-      color: white;
-      box-shadow: 0 0 10px #ff3333;
-      transform: translateY(-2px);
+    .button-row .btn:hover {
+      background:#ff3333; color:#fff; box-shadow:0 12px 30px rgba(255,59,59,0.12); transform:translateY(-2px);
     }
 
     .reports-panel {
-      margin-top: 15px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 10px;
-      padding: 10px;
-      display: none;
-      flex-direction: column;
-      gap: 8px;
-      width: 100%;
+      display:none;
+      margin-top:10px;
+      background:rgba(0,0,0,0.28);
+      padding:10px; border-radius:8px; max-height:260px; overflow:auto;
     }
-
     .report-item {
-      background: rgba(255, 255, 255, 0.08);
-      padding: 8px;
-      border-left: 3px solid #ff3333;
-      border-radius: 6px;
-      font-size: 14px;
-      color: white;
+      background:rgba(255,255,255,0.03); padding:8px; border-left:3px solid #ff3333; margin-bottom:8px; border-radius:6px;
+      white-space:pre-wrap; font-size:14px; color:#fff;
     }
 
     .add-report {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
+      display:flex; gap:8px; margin-top:8px; align-items:flex-start;
+    }
+    .add-report textarea {
+      flex:1; min-height:72px; padding:8px; border-radius:8px; border:none; background:rgba(255,255,255,0.03); color:#fff;
+      resize:vertical;
+    }
+    .add-report button {
+      background:#ff3333; color:#fff; border:none; padding:10px 12px; border-radius:8px; font-weight:700; cursor:pointer;
     }
 
-    .add-report textarea {
-      flex: 1;
-      padding: 8px;
-      border-radius: 8px;
-      border: none;
-      background: rgba(255, 255, 255, 0.05);
-      color: white;
-      resize: vertical;
-      min-height: 60px;
+    /* edit row (inline) */
+    .edit-row { display:flex; gap:8px; align-items:center; width:100%; margin-top:8px; }
+    .edit-row input[type="text"] { flex:1; padding:8px; border-radius:8px; border:none; background:rgba(255,255,255,0.03); color:#fff; }
+    .edit-row input[type="file"]{ color:#fff; }
+    .edit-actions { display:flex; gap:8px; }
+    .small-muted { color: rgba(255,255,255,0.6); font-size:13px; margin-top:6px; text-align:center; }
+
+    /* responsive tweaks */
+    @media (max-width:560px){
+      .grid { grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); }
+      .card { min-height:300px; }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>⚠️ SCAMMERS ⚠️</h1>
-    <div class="admin-section">
-      <div class="input-group">
-        <input type="text" id="profileUrl" placeholder="Paste Facebook profile URL..." />
-        <button onclick="addProfile()">Add</button>
-      </div>
+
+    <div class="admin">
+      <input id="profileUrl" placeholder="Paste Facebook profile URL..." />
+      <button id="addBtn">Add</button>
     </div>
-    <div class="profiles-grid" id="profilesGrid"></div>
+
+    <div id="grid" class="grid"></div>
   </div>
 
   <script>
+    // ---------- CONFIG ----------
     const SUPABASE_URL = "https://jikydjqvakjirisekudj.supabase.co";
-    const SUPABASE_KEY = "YOUR-ANON-KEY-HERE";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imppa3lkanF2YWtqaXJpc2VrdWRqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk3MjU1MTUsImV4cCI6MjA3NTMwMTUxNX0.eKtrwpGJuZcfnm2MfOmRlwrunSy6kvXQJqfKJ6DzuG4";
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const STORAGE_BUCKET = "profile-images"; // ensure this exists
 
-    async function loadProfiles() {
-      const { data, error } = await supabase
-        .from("scammers")
-        .select("*")
-        .order("id", { ascending: false });
-      if (error) console.error(error);
-      else renderProfiles(data);
-    }
-
-    function extractNameFromUrl(url) {
-      try {
-        const urlObj = new URL(url);
-        const pathname = urlObj.pathname;
-        if (pathname && pathname !== "/" && !pathname.includes("profile.php")) {
-          let name = pathname.replace(/^\//, "").split("/")[0];
-          name = decodeURIComponent(name);
-          name = name
-            .replace(/[._-]/g, " ")
-            .split(" ")
-            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-            .join(" ");
-          return name;
+    // ---------- HELPERS ----------
+    function extractNameFromUrl(url){
+      try{
+        const u = new URL(url);
+        const path = u.pathname.replace(/^\/|\/$/g,'');
+        if (path && !path.includes('profile.php')) {
+          const raw = decodeURIComponent(path.split('/')[0]).replace(/[._-]/g,' ');
+          return raw.split(' ').map(w => w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
         }
-        const params = new URLSearchParams(urlObj.search);
-        const id = params.get("id");
-        return id ? `User ${id}` : "Facebook User";
-      } catch {
-        return "Facebook User";
+        const id = new URLSearchParams(u.search).get('id');
+        return id ? `User ${id}` : 'Facebook User';
+      }catch(e){
+        return 'Facebook User';
       }
     }
-
-    function extractProfilePicUrl(url) {
-      try {
-        const urlObj = new URL(url);
-        let username = "";
-        const pathname = urlObj.pathname;
-        if (pathname && pathname !== "/" && !pathname.includes("profile.php")) {
-          username = pathname.replace(/^\//, "").split("/")[0];
-        } else {
-          const params = new URLSearchParams(urlObj.search);
-          const id = params.get("id");
-          if (id) username = id;
-        }
-        return username
-          ? `https://graph.facebook.com/${username}/picture?type=large`
-          : null;
-      } catch {
+    function extractPicFromUrl(url){
+      try{
+        const u = new URL(url);
+        const path = u.pathname.replace(/^\/|\/$/g,'');
+        let username = '';
+        if (path && !path.includes('profile.php')) username = path.split('/')[0];
+        else username = new URLSearchParams(u.search).get('id') || '';
+        return username ? `https://graph.facebook.com/${username}/picture?type=large` : null;
+      }catch(e){
         return null;
       }
     }
 
-    async function addProfile() {
-      const input = document.getElementById("profileUrl");
-      const url = input.value.trim();
-      if (!url) return alert("Enter a Facebook profile URL");
-      const fullUrl = url.startsWith("http") ? url : "https://" + url;
-      const name = extractNameFromUrl(fullUrl);
-      const picUrl = extractProfilePicUrl(fullUrl);
+    // ---------- DOM references ----------
+    const grid = document.getElementById('grid');
+    const addBtn = document.getElementById('addBtn');
+    const profileUrlInput = document.getElementById('profileUrl');
 
-      const { error } = await supabase.from("scammers").insert([{ name, url: fullUrl, picUrl }]);
-      if (error) console.error(error);
-      else {
-        input.value = "";
-        loadProfiles();
+    addBtn.addEventListener('click', addProfile);
+    profileUrlInput.addEventListener('keypress', e => { if(e.key === 'Enter') addProfile(); });
+
+    // ---------- Core: add profile ----------
+    async function addProfile(){
+      const raw = profileUrlInput.value.trim();
+      if (!raw) return alert('Enter a Facebook profile URL');
+      if (!(raw.includes('facebook.com') || raw.includes('fb.com'))) return alert('Not a valid Facebook URL');
+
+      const full = raw.startsWith('http') ? raw : ('https://'+raw);
+      const name = extractNameFromUrl(full);
+      const picurl = extractPicFromUrl(full);
+
+      // Insert into DB (note: using column 'picurl' lowercase as you said)
+      const { data, error } = await supabase.from('scammers').insert([{ name, url: full, picurl }]);
+      if (error) {
+        console.error('Insert error:', error);
+        alert('Failed to add profile: ' + (error.message || JSON.stringify(error)));
+        return;
       }
-    }
-
-    async function loadReports(profileId) {
-      const { data, error } = await supabase
-        .from("reports")
-        .select("*")
-        .eq("scammer_id", profileId)
-        .order("id", { ascending: false });
-      if (error) console.error(error);
-      return data || [];
-    }
-
-    async function addReport(profileId, text) {
-      if (!text.trim()) return;
-      const { error } = await supabase.from("reports").insert([{ scammer_id: profileId, text }]);
-      if (error) console.error(error);
+      profileUrlInput.value = '';
       loadProfiles();
     }
 
-    async function enableEditing(profile) {
-      const newName = prompt("Edit Name:", profile.name) || profile.name;
-      const newPic = prompt("Paste new image URL or leave blank:", "") || profile.picUrl;
-      const { error } = await supabase
-        .from("scammers")
-        .update({ name: newName, picUrl: newPic })
-        .eq("id", profile.id);
-      if (error) console.error(error);
-      loadProfiles();
+    // ---------- Load and render ----------
+    async function loadProfiles(){
+      const { data, error } = await supabase.from('scammers').select('*').order('id',{ ascending:false });
+      if (error) { console.error('fetch scammers error', error); return; }
+      renderGrid(data || []);
     }
 
-    async function renderProfiles(profiles) {
-      const grid = document.getElementById("profilesGrid");
-      grid.innerHTML = "";
+    function renderGrid(items){
+      grid.innerHTML = '';
+      for (const item of items){
+        const card = document.createElement('div'); card.className = 'card';
+        // edit button top-right
+        const editTop = document.createElement('div'); editTop.className = 'edit-top';
+        const editBtn = document.createElement('button'); editBtn.textContent = 'Edit';
+        editBtn.onclick = () => openEditInline(item.id);
+        editTop.appendChild(editBtn);
+        card.appendChild(editTop);
 
-      for (const profile of profiles) {
-        const card = document.createElement("div");
-        card.className = "profile-card";
-
-        const pic = document.createElement("div");
-        pic.className = "profile-pic";
-        if (profile.picUrl) {
-          const img = document.createElement("img");
-          img.src = profile.picUrl;
-          img.alt = profile.name;
-          pic.appendChild(img);
+        // avatar
+        const avatar = document.createElement('div'); avatar.className = 'avatar'; avatar.id = `avatar-${item.id}`;
+        if (item.picurl){
+          const img = document.createElement('img'); img.src = item.picurl; img.alt = item.name || 'avatar';
+          img.onerror = () => { img.style.display = 'none'; avatar.textContent = (item.name||'?').charAt(0).toUpperCase(); };
+          avatar.appendChild(img);
         } else {
-          pic.textContent = profile.name[0].toUpperCase();
+          avatar.textContent = (item.name||'?').charAt(0).toUpperCase();
         }
+        card.appendChild(avatar);
 
-        const nameDiv = document.createElement("div");
-        nameDiv.className = "profile-name";
-        nameDiv.textContent = profile.name;
-
-        const editBtn = document.createElement("button");
-        editBtn.className = "edit-btn";
-        editBtn.textContent = "Edit";
-        editBtn.onclick = () => enableEditing(profile);
-
-        const buttonRow = document.createElement("div");
-        buttonRow.className = "button-row";
-
-        const profileBtn = document.createElement("a");
-        profileBtn.href = profile.url;
-        profileBtn.target = "_blank";
-        profileBtn.className = "btn";
-        profileBtn.textContent = "View Profile";
-
-        const reportsBtn = document.createElement("button");
-        reportsBtn.className = "btn";
-        reportsBtn.textContent = "View Reports";
-
-        const reportsPanel = document.createElement("div");
-        reportsPanel.className = "reports-panel";
-
-        reportsBtn.onclick = async () => {
-          if (reportsPanel.style.display === "flex") {
-            reportsPanel.style.display = "none";
-            return;
-          }
-          const reports = await loadReports(profile.id);
-          reportsPanel.innerHTML = reports
-            .map(r => `<div class="report-item">${r.text}</div>`)
-            .join("");
-          const form = document.createElement("div");
-          form.className = "add-report";
-          form.innerHTML = `
-            <textarea placeholder="Add a report..."></textarea>
-            <button>Submit</button>
-          `;
-          form.querySelector("button").onclick = async () => {
-            const text = form.querySelector("textarea").value;
-            await addReport(profile.id, text);
-          };
-          reportsPanel.appendChild(form);
-          reportsPanel.style.display = "flex";
-        };
-
-        buttonRow.appendChild(profileBtn);
-        buttonRow.appendChild(reportsBtn);
-
-        card.appendChild(editBtn);
-        card.appendChild(pic);
+        // name
+        const nameDiv = document.createElement('div'); nameDiv.className = 'name'; nameDiv.id = `name-${item.id}`;
+        nameDiv.textContent = item.name || 'Unknown';
         card.appendChild(nameDiv);
+
+        // spacer to keep buttons bottom-aligned
+        const spacer = document.createElement('div'); spacer.className = 'spacer';
+        card.appendChild(spacer);
+
+        // buttons row
+        const buttonRow = document.createElement('div'); buttonRow.className = 'button-row';
+        const viewProfile = document.createElement('a');
+        viewProfile.className = 'btn';
+        viewProfile.textContent = 'View Profile';
+        viewProfile.href = item.url || '#';
+        viewProfile.target = '_blank';
+        viewProfile.rel = 'noopener noreferrer';
+        const viewReports = document.createElement('button');
+        viewReports.className = 'btn';
+        viewReports.textContent = 'View Reports';
+        viewReports.onclick = () => toggleReports(item.id);
+        buttonRow.appendChild(viewProfile); buttonRow.appendChild(viewReports);
         card.appendChild(buttonRow);
+
+        // reports panel
+        const reportsPanel = document.createElement('div'); reportsPanel.className = 'reports-panel'; reportsPanel.id = `reports-${item.id}`;
         card.appendChild(reportsPanel);
 
         grid.appendChild(card);
       }
     }
 
+    // ---------- Inline edit ----------
+    async function openEditInline(id){
+      const card = document.querySelector(`.card:nth-child(1)`) // fallback if anything weird
+      const targetCard = Array.from(document.querySelectorAll('.card')).find(c => c.querySelector(`#name-${id}`));
+      if (!targetCard) return;
+      // hide edit button
+      const editTop = targetCard.querySelector('.edit-top'); if (editTop) editTop.style.display = 'none';
+
+      // find current values
+      const nameEl = targetCard.querySelector(`#name-${id}`);
+      const currentName = nameEl ? nameEl.textContent : '';
+      const avatarEl = targetCard.querySelector(`#avatar-${id}`);
+      // create edit row
+      const editRow = document.createElement('div'); editRow.className = 'edit-row';
+      editRow.innerHTML = `
+        <input type="text" id="edit-name-${id}" value="${escapeHtmlAttr(currentName)}" />
+        <input type="file" id="edit-file-${id}" accept="image/*" />
+        <div class="edit-actions">
+          <button id="save-edit-${id}">Save</button>
+          <button id="cancel-edit-${id}">Cancel</button>
+        </div>
+      `;
+      targetCard.appendChild(editRow);
+
+      document.getElementById(`cancel-edit-${id}`).onclick = () => {
+        editRow.remove();
+        if (editTop) editTop.style.display = '';
+      };
+
+      document.getElementById(`save-edit-${id}`).onclick = async () => {
+        const newName = document.getElementById(`edit-name-${id}`).value.trim();
+        const fileInput = document.getElementById(`edit-file-${id}`);
+        let newPicUrl = null;
+
+        if (fileInput && fileInput.files && fileInput.files[0]) {
+          const file = fileInput.files[0];
+          const filePath = `scammer-${id}-${Date.now()}-${file.name}`;
+          const { data: uploadData, error: uploadError } = await supabase.storage.from(STORAGE_BUCKET).upload(filePath, file);
+          if (uploadError) {
+            console.error('uploadErr', uploadError);
+            alert('Image upload failed: ' + (uploadError.message || JSON.stringify(uploadError)));
+            return;
+          }
+          const { data: urlData } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(uploadData.path);
+          newPicUrl = urlData.publicUrl;
+        }
+
+        const updateObj = {};
+        if (newName) updateObj.name = newName;
+        if (newPicUrl) updateObj.picurl = newPicUrl;
+
+        if (Object.keys(updateObj).length === 0) {
+          alert('Nothing to save');
+          return;
+        }
+
+        const { error } = await supabase.from('scammers').update(updateObj).eq('id', id);
+        if (error) {
+          console.error('update err', error);
+          alert('Save failed: ' + (error.message || JSON.stringify(error)));
+          return;
+        }
+
+        // update UI
+        if (newName) {
+          const nameCell = targetCard.querySelector(`#name-${id}`);
+          if (nameCell) nameCell.textContent = newName;
+        }
+        if (newPicUrl) {
+          const av = targetCard.querySelector(`#avatar-${id}`);
+          if (av) av.innerHTML = `<img src="${newPicUrl}" alt="${escapeHtml(newName||'')}" />`;
+        }
+
+        editRow.remove();
+        if (editTop) editTop.style.display = '';
+      };
+    }
+
+    // ---------- Reports functions ----------
+    async function toggleReports(id){
+      const panel = document.getElementById(`reports-${id}`);
+      if (!panel) return;
+      if (panel.style.display === 'block') { panel.style.display = 'none'; panel.innerHTML = ''; return; }
+
+      panel.style.display = 'block';
+      panel.innerHTML = `<div class="small-muted">Loading reports...</div>`;
+
+      const { data: reports, error } = await supabase
+        .from('reports')
+        .select('*')
+        .eq('scammer_id', id)
+        .order('created_at',{ ascending: false });
+
+      if (error) {
+        console.error('fetch reports', error);
+        panel.innerHTML = `<div class="small-muted">Failed to load reports.</div>`;
+        return;
+      }
+
+      const listHtml = (reports && reports.length)
+        ? reports.map(r => `<div class="report-item">${escapeHtml(r.text || r.description || '')}</div>`).join('')
+        : `<div class="small-muted">No reports yet.</div>`;
+
+      panel.innerHTML = `
+        <div>${listHtml}</div>
+        <div class="add-report">
+          <textarea id="report-input-${id}" placeholder="Describe how this person scammed..."></textarea>
+          <button id="submit-report-${id}">Submit</button>
+        </div>
+      `;
+      document.getElementById(`submit-report-${id}`).onclick = async () => {
+        const ta = document.getElementById(`report-input-${id}`);
+        const text = ta.value.trim();
+        if (!text) return alert('Write something before submitting');
+        const { error } = await supabase.from('reports').insert([{ scammer_id: id, text }]);
+        if (error) { console.error('insert report', error); alert('Failed to submit'); return; }
+        ta.value = '';
+        // refresh report list
+        toggleReports(id);
+        setTimeout(()=> toggleReports(id), 120);
+      };
+    }
+
+    // ---------- small utilities ----------
+    function escapeHtml(s){ if (!s && s !== 0) return ''; return String(s).replace(/[&<>"']/g, function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];}); }
+    function escapeHtmlAttr(s){ return escapeHtml(s).replace(/"/g,'&quot;'); }
+
+    // ---------- kickoff ----------
     loadProfiles();
-    document.getElementById("profileUrl").addEventListener("keypress", e => {
-      if (e.key === "Enter") addProfile();
-    });
+
+    // expose for debugging
+    window.loadProfiles = loadProfiles;
   </script>
 </body>
 </html>
