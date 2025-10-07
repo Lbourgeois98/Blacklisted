@@ -379,11 +379,11 @@
         const file = fileInput.files[0];
         const filePath = `${Date.now()}_${file.name}`;
         const { error: uploadError } = await supabase.storage
-          .from("profile_images")
+          .from("profile-images")
           .upload(filePath, file, { upsert: true });
         if (uploadError) return alert("Image upload failed: " + uploadError.message);
 
-        const { data } = supabase.storage.from("profile_images").getPublicUrl(filePath);
+        const { data } = supabase.storage.from("profile-images").getPublicUrl(filePath);
         picUrl = data.publicUrl;
       }
 
