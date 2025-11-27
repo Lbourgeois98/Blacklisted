@@ -1,125 +1,125 @@
-/* GLOBAL THEME */
 body {
-  font-family: 'Anton', sans-serif;
+  font-family: 'Bebas Neue', sans-serif;
   margin: 0;
-  color: white;
+  color: #fff;
   text-align: center;
   background: #000;
   background-image:
     url("https://www.transparenttextures.com/patterns/black-linen.png"),
-    radial-gradient(circle at center, rgba(255,0,0,0.1), transparent 70%);
+    linear-gradient(to bottom, rgba(255,0,0,0.08), rgba(0,0,0,0.9));
 }
 
-/* HEADER – CLEAN (NO GLOW ON TEXT) */
+/* HEADER – no glow, outline instead */
 .logo-title {
-  font-size: 3.3rem;
+  font-size: 3.8rem;
   margin: 0;
-  letter-spacing: 2px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  text-shadow:
+    -2px -2px 0 #000,
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000; /* Hard outline */
 }
 .logo-title span {
-  color: #FF1C1C; /* Strong red, no glow */
+  color: #FF1C1C;
+  text-shadow:
+    -2px -2px 0 #000,
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000;
 }
 .subtext {
-  font-size: 1.05rem;
-  color: #c1c1c1;
-  margin-top: 5px;
+  font-size: 1.2rem;
+  font-family: 'Teko', sans-serif;
+  color: #c2c2c2;
 }
 
-/* GRID – Tighter spacing */
+/* GRID – multiple rows */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  max-width: 1150px;
+  gap: 22px;
+  max-width: 1170px;
   margin: auto;
   padding: 30px;
 }
 
-/* CARD STYLE */
+/* CARD – deep, outlined */
 .card {
   background: #101010;
-  border: 2px solid #333;
-  border-radius: 10px;
+  border: 3px solid #262626;
+  border-radius: 12px;
   padding: 15px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: 0.4s;
+  transition: 0.35s ease;
   position: relative;
-  overflow: hidden;
 }
-
-/* DIAGONAL ENERGY STREAK (graphic effect) */
-.card::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: linear-gradient(135deg, transparent 40%, rgba(255,0,0,0.25), transparent 60%);
-  transform: rotate(0deg);
-  transition: 0.8s ease;
-  opacity: 0;
-}
-.card:hover::before {
-  transform: rotate(25deg);
-  opacity: 1;
-}
-
-/* EPIC HOVER */
 .card:hover {
-  transform: translateY(-7px) scale(1.05);
+  transform: scale(1.05);
   border-color: #FF1C1C;
-  box-shadow: 0 0 25px rgba(255,50,50,0.45);
+  box-shadow: 0 0 20px rgba(255, 28, 28, 0.4);
 }
 
-/* CARD TEXT */
+/* CARD TEXT – outlined & aggressive */
 .card h2 {
-  font-size: 1.4rem;
+  font-size: 1.6rem;
   margin: 5px 0;
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
 }
 .followers {
   font-size: 1rem;
-  margin: 2px 0;
-  color: #d1d1d1;
+  margin: 4px 0;
+  color: #e0e0e0;
 }
 .price {
-  font-size: 1.5rem;
-  margin: 5px 0;
+  font-size: 1.6rem;
   color: #FFAE00;
+  margin: 5px 0;
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
 }
 
-/* BUTTON (Pulse without glow-text) */
+/* BUTTON – thicker outline and pulse */
 @keyframes pulse {
   0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  50% { transform: scale(1.08); }
   100% { transform: scale(1); }
 }
 .btn {
   display: inline-block;
-  padding: 8px 22px;
+  padding: 9px 24px;
   background: #FF1C1C;
-  color: white;
   border-radius: 6px;
+  color: #fff;
   text-decoration: none;
   transition: 0.3s;
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000;
 }
 .btn:hover {
-  transform: scale(1.15);
-  animation: pulse 0.5s ease-in-out;
-  box-shadow: 0 0 18px rgba(255, 28, 28, 0.6);
+  transform: scale(1.2);
+  animation: pulse 0.5s;
 }
 
 /* FOOTER */
 footer {
-  background: #090909;
-  padding: 15px;
-  color: #747474;
+  background: #0B0B0B;
+  padding: 14px;
+  color: #777;
   font-size: 0.9rem;
 }
 
-/* MOBILE */
+/* Responsive */
 @media (max-width: 768px) {
   .grid { grid-template-columns: repeat(2, 1fr); }
 }
