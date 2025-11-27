@@ -1,5 +1,5 @@
 /* =========================
-   GLOBAL + NEON PULSE BACKGROUND
+   EPIC RED NEON + DEEP ENERGY
 ========================= */
 body {
   margin: 0;
@@ -7,160 +7,183 @@ body {
   color: #ffffff;
   text-align: center;
   background: radial-gradient(circle at center,
-      rgba(255, 0, 0, 0.7) 0%,
-      rgba(120, 0, 0, 0.4) 25%,
-      rgba(40, 0, 0, 0.25) 50%,
-      rgba(0, 0, 0, 0.9) 100%
-    ),
-    url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
-  animation: pulseBackground 4s ease-in-out infinite;
+      rgba(255, 0, 0, 0.65) 0%,
+      rgba(120, 0, 0, 0.3) 35%,
+      rgba(10, 0, 0, 0.9) 85%
+  ),
+  url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
   background-size: cover;
+  animation: pulseBackground 3.5s ease-in-out infinite;
   position: relative;
   overflow-x: hidden;
 }
 
-/* Neon glowing expansion effect */
-body::before {
+/* Smoke layer */
+body::after {
   content: "";
   position: fixed;
-  top: -15%;
-  left: -15%;
-  width: 130%;
-  height: 130%;
-  background: radial-gradient(circle at center,
-      rgba(255, 0, 0, 0.15) 0%,
-      transparent 70%
-    );
-  filter: blur(55px);
+  top: 0;
+  left: 0;
+  width: 120%;
+  height: 120%;
+  background: url("https://i.imgur.com/7yT8YqB.png") repeat;
+  filter: blur(50px);
+  opacity: 0.18;
+  animation: smokeDrift 20s infinite linear;
+  pointer-events: none;
   z-index: -1;
-  animation: glowWave 7s infinite ease-in-out;
-}
-
-@keyframes glowWave {
-  0% { transform: scale(1); opacity: 0.7; }
-  50% { transform: scale(1.2); opacity: 1; }
-  100% { transform: scale(1); opacity: 0.7; }
 }
 
 @keyframes pulseBackground {
-  0% {
-    background-color: #120000;
-    box-shadow: inset 0 0 60px rgba(255, 0, 0, 0.35);
-  }
-  50% {
-    background-color: #250000;
-    box-shadow: inset 0 0 200px rgba(255, 0, 0, 0.65);
-  }
-  100% {
-    background-color: #120000;
-    box-shadow: inset 0 0 60px rgba(255, 0, 0, 0.35);
-  }
+  0% {background-color: #100000;}
+  50% {background-color: #270000;}
+  100% {background-color: #100000;}
+}
+
+@keyframes smokeDrift {
+  from { transform: translateX(-10%) translateY(-5%); }
+  to { transform: translateX(10%) translateY(5%); }
 }
 
 /* =========================
    HEADER
 ========================= */
 header {
-  padding: 30px 10px 15px;
+  padding: 25px 10px;
 }
-
 .logo-title {
   font-size: 3rem;
   letter-spacing: 2px;
   margin: 0;
+  text-shadow: 0 0 5px rgba(255,30,30,0.6), 0 0 10px rgba(255,0,0,0.4);
 }
-
 .logo-title span {
-  color: #ff2727;
+  color: #ff3b3b;
 }
 
 /* =========================
-   GRID – ALWAYS 3 CARDS PER ROW
+   GRID – 3 Cards ALWAYS
 ========================= */
 .grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 16px;
   padding: 20px 10px;
-  max-width: 1200px;
+  max-width: 1150px;
   margin: auto;
 }
 
 /* =========================
-   CARD – STACKED LAYOUT
+   CARD – NEW INTENSE LOOK
 ========================= */
 .card {
-  background: #161616;
-  border: 2px solid #292929;
+  background: linear-gradient(to bottom, #1a1a1a, #101010);
+  border: 2px solid #2a2a2a;
   border-radius: 12px;
-  padding: 14px 10px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  padding: 12px;
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  min-height: 270px;
+  overflow: hidden;
+}
+
+/* Card glow pulse */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: radial-gradient(circle, rgba(255,0,0,0.1), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.card:hover::before {
+  opacity: 1;
+}
+
+/* Light slash effect */
+.card::after {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(115deg, transparent 40%, rgba(255, 0, 0, 0.25) 50%, transparent 60%);
+  transform: rotate(0deg);
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  opacity: 0;
+}
+
+.card:hover::after {
+  transform: rotate(25deg);
+  opacity: 1;
 }
 
 .card:hover {
-  transform: translateY(-6px) scale(1.03);
-  box-shadow: 0 0 25px rgba(255, 38, 38, 0.6);
+  transform: translateY(-7px) scale(1.04);
+  box-shadow: 0 0 25px rgba(255, 30, 30, 0.7), 0 0 8px rgba(255, 0, 0, 0.5);
   border-color: #ff2727;
 }
 
 /* =========================
-   PROFILE IMAGE – Bigger
+   PROFILE PIC
 ========================= */
 .page-img {
-  width: clamp(75px, 22vw, 130px);
-  height: clamp(75px, 22vw, 130px);
+  width: clamp(80px, 22vw, 140px);
+  height: clamp(80px, 22vw, 140px);
   object-fit: cover;
   border-radius: 50%;
   border: 4px solid #ff2727;
-  box-shadow: 0 0 15px rgba(255,39,39,0.7);
-  margin: 6px 0 10px;
+  box-shadow: 0 0 15px rgba(255,50,50,0.8);
+  margin: 8px 0 10px;
 }
 
 /* =========================
-   TEXT ORDER
+   TEXT
 ========================= */
 .card h2 {
-  font-size: clamp(1.1rem, 4vw, 1.6rem);
+  font-size: clamp(1.2rem, 4vw, 1.6rem);
   margin: 4px 0;
-  text-shadow:
-    -1px -1px 0 #000,
-     1px -1px 0 #000,
-    -1px  1px 0 #000,
-     1px  1px 0 #000;
+  text-shadow: 0 0 4px rgba(0,0,0,0.7);
 }
 
 .followers {
-  font-size: clamp(0.85rem, 3vw, 1.1rem);
-  margin: 3px 0;
+  font-size: clamp(0.9rem, 3vw, 1rem);
+  margin: 2px 0;
+  color: #dcdcdc;
 }
 
 .price {
-  font-size: clamp(1rem, 3.5vw, 1.4rem);
-  color: #ffb400;
-  margin: 4px 0 8px;
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  margin: 4px 0 10px;
+  color: #ffae00;
 }
 
 /* =========================
-   BUTTON – bold and visible
+   VIEW BUTTON – BIG & AGGRESSIVE
 ========================= */
 .btn {
   display: inline-block;
-  padding: clamp(6px, 2vw, 10px) clamp(12px, 4vw, 26px);
+  padding: clamp(12px, 3vw, 15px) clamp(18px, 5vw, 40px);
   background: #ff2727;
-  color: #ffffff;
-  border-radius: 6px;
+  color: white;
   text-decoration: none;
-  font-size: clamp(0.9rem, 3vw, 1.2rem);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  margin-top: 4px;
+  border-radius: 6px;
+  font-size: clamp(1rem, 3vw, 1.3rem);
+  font-weight: bold;
+  transition: 0.25s ease;
+  margin-top: auto;
+  box-shadow: 0 0 8px rgba(255,60,60,0.5);
 }
 
 .btn:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 20px rgba(255,50,50,0.7);
+  transform: scale(1.18);
+  box-shadow: 0 0 25px rgba(255,60,60,0.8);
 }
 
 /* =========================
@@ -169,18 +192,6 @@ header {
 footer {
   background: #0a0a0a;
   padding: 14px;
-  font-size: 0.85rem;
-  color: #777777;
-}
-
-/* =========================
-   MAKE CARD CONTENT LARGER ON SMALL PHONES
-========================= */
-@media (max-width: 480px) {
-  .card {
-    padding: 10px;
-  }
-  .logo-title {
-    font-size: 2.4rem;
-  }
+  font-size: 0.9rem;
+  color: #777;
 }
