@@ -1,131 +1,156 @@
-/* GLOBAL STYLES */
+/* =========================
+   GLOBAL STYLES WITH PULSE
+========================= */
 body {
   margin: 0;
   font-family: 'Anton', sans-serif;
   color: #fff;
   text-align: center;
-  background: #0a0a0a;
+  background: #070707;
   background-image:
-    url("https://www.transparenttextures.com/patterns/asfalt-dark.png"),
-    radial-gradient(circle at center, rgba(255,0,0,0.25), transparent 70%);
+    radial-gradient(circle at center, rgba(255,0,0,0.25), transparent 70%),
+    url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
   background-size: cover;
+  animation: pulseBackground 4s ease-in-out infinite;
 }
 
-/* HEADER */
+/* Pulse Effect */
+@keyframes pulseBackground {
+  0% {
+    background-color: #070707;
+    box-shadow: inset 0 0 40px rgba(255, 0, 0, 0.15);
+  }
+  50% {
+    background-color: #0d0000;
+    box-shadow: inset 0 0 100px rgba(255, 0, 0, 0.35);
+  }
+  100% {
+    background-color: #070707;
+    box-shadow: inset 0 0 40px rgba(255, 0, 0, 0.15);
+  }
+}
+
+/* =========================
+   HEADER
+========================= */
 header {
-  padding: 35px 10px 10px;
+  padding: 40px 12px 20px;
 }
 .logo-title {
-  font-size: 3.2rem;
-  text-transform: uppercase;
+  font-size: 3.5rem;
+  letter-spacing: 3px;
+  margin: 0;
 }
 .logo-title span {
   color: #ff2727;
 }
-.subtext {
-  font-size: 1rem;
-}
 
-/* GRID – multi-row layout */
+/* =========================
+   GRID - 3 PER ROW DESIGN
+========================= */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 18px;
   padding: 20px;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: auto;
 }
 
-/* CARD STYLES */
+/* =========================
+   CARD STYLE
+========================= */
 .card {
-  background: #171717;
+  background: #161616;
+  border: 2px solid #292929;
   border-radius: 12px;
-  border: 2px solid #2a2a2a;
-  padding: 12px;
+  padding: 15px 10px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 }
 .card:hover {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 0 20px rgba(255, 34, 34, 0.6);
-  border-color: #ff2222;
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: 0 0 25px rgba(255, 38, 38, 0.5);
+  border-color: #ff2727;
 }
 
-/* PROFILE IMAGE WITH ROUND RED FRAME */
+/* =========================
+   PROFILE IMAGE
+========================= */
 .page-img {
-  width: 120px;
-  height: 120px;
+  width: 125px;
+  height: 125px;
   object-fit: cover;
   border-radius: 50%;
   border: 4px solid #ff2727;
-  box-shadow: 0 0 12px rgba(255,39,39,0.6);
-  margin: 6px auto 10px;
-  display: block;
+  box-shadow: 0 0 15px rgba(255,39,39,0.6);
+  margin-bottom: 12px;
 }
 
-/* TEXT STYLING IN CARD */
+/* =========================
+   TEXT STYLES
+========================= */
 .card h2 {
-  font-size: 1.4rem;
-  margin: 7px 0;
-  text-shadow:
-    -1px -1px 0 black,
-     1px -1px 0 black,
-    -1px  1px 0 black,
-     1px  1px 0 black;
+  font-size: 1.5rem;
+  margin: 6px 0;
 }
 .followers {
   font-size: 1rem;
-  color: #dcdcdc;
+  color: #d3d3d3;
+  margin: 2px 0;
 }
 .price {
-  font-size: 1.3rem;
-  color: #ffb100;
-  margin: 3px 0 8px;
-  text-shadow:
-    -1px -1px 0 black,
-     1px -1px 0 black,
-    -1px  1px 0 black,
-     1px  1px 0 black;
+  font-size: 1.5rem;
+  color: #ffae00;
+  margin: 6px 0 10px;
 }
 
-/* BUTTON STYLE */
+/* =========================
+   BUTTON
+========================= */
 .btn {
   display: inline-block;
   background: #ff2727;
   color: #fff;
-  padding: 8px 20px;
-  border-radius: 6px;
+  padding: 8px 24px;
+  border-radius: 8px;
   text-decoration: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 1.05rem;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 .btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(255,40,40,0.7);
+  transform: scale(1.15);
+  box-shadow: 0 0 20px rgba(255, 40, 40, 0.7);
 }
 
-/* FOOTER */
+/* =========================
+   FOOTER
+========================= */
 footer {
-  background: #0c0c0c;
-  padding: 15px;
+  background: #0b0b0b;
+  padding: 18px;
   font-size: 0.9rem;
   color: #777;
 }
 
-/* MOBILE FIX — 2 CARDS PER ROW */
-@media (max-width: 600px) {
+/* =========================
+   RESPONSIVE DESIGN
+========================= */
+@media (max-width: 1024px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-
-  .page-img {
-    width: 110px;
-    height: 110px;
   }
 }
 
-/* Extra small screens */
-@media (max-width: 380px) {
+@media (max-width: 520px) {
   .grid {
     grid-template-columns: 1fr;
+  }
+  .page-img {
+    width: 110px;
+    height: 110px;
   }
 }
