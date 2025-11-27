@@ -1,78 +1,101 @@
-/* GENERAL */
+/* ===== FONT & THEME ===== */
 body {
-  font-family: Arial, sans-serif;
-  background: #111827;
-  color: white;
+  font-family: 'Teko', sans-serif;
+  background: #0a0a0a;
+  background-image: radial-gradient(circle at top, rgba(200,0,0,0.15), transparent 70%);
+  color: #E5E5E5;
   margin: 0;
   text-align: center;
+  letter-spacing: 0.5px;
 }
 
-/* HEADER */
+/* ===== HEADER ===== */
 header {
-  padding: 30px 15px;
+  padding: 40px 15px;
 }
-h1 {
-  font-size: 2rem;
+.logo-title {
+  font-size: 3.2rem;
+  color: #FFF;
+  text-transform: uppercase;
   margin: 0;
+  letter-spacing: 2px;
+}
+.logo-title span {
+  color: #d62828; /* Accent red */
 }
 .subtext {
-  color: #9ca3af;
-  font-size: 1rem;
+  color: #9CA3AF;
+  font-size: 1.1rem;
+  margin-top: 8px;
 }
 
-/* GRID LAYOUT */
+/* ===== GRID LAYOUT ===== */
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 20px;
-  padding: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  padding: 30px;
   max-width: 1200px;
   margin: auto;
 }
 
-/* CARD DESIGN */
+/* ===== CARD STYLE ===== */
 .card {
-  background: #1f2937;
-  border-radius: 10px;
+  background: #111111;
+  border: 2px solid #d62828;
+  border-radius: 8px;
   padding: 20px;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
+.card:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 0 0 20px rgba(214, 40, 40, 0.6);
+  border-color: #ff3b3b;
+}
+
 .card h2 {
   margin: 10px 0;
-  font-size: 1.3rem;
+  font-size: 1.8rem;
+  color: #FFF;
+  font-weight: 600;
 }
-.stats {
-  color: #9ca3af;
+
+.followers {
+  color: #BBBBBB;
+  font-size: 1.2rem;
   margin: 5px 0;
 }
+
 .price {
-  font-size: 1.1rem;
-  color: #22c55e;
-  font-weight: bold;
+  font-size: 1.6rem;
+  color: #d62828;
+  font-weight: 700;
   margin: 10px 0;
 }
 
-/* BUTTON (LINK) */
+/* ===== BUTTON STYLE ===== */
 .btn {
-  background: #3b82f6;
+  background: #d62828;
   color: white;
-  padding: 10px 18px;
+  padding: 10px 24px;
   border-radius: 6px;
   text-decoration: none;
   display: inline-block;
-  font-size: 0.9rem;
-  transition: 0.3s;
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  transition: background 0.3s, transform 0.3s;
 }
 .btn:hover {
-  background: #2563eb;
+  background: #ff4949;
+  transform: scale(1.05);
 }
 
-/* FOOTER */
+/* ===== FOOTER ===== */
 footer {
-  padding: 20px 0;
-  background: #1f2937;
-  margin-top: 15px;
-}
-footer p {
-  margin: 0;
-  color: #9ca3af;
+  padding: 25px 0;
+  background: #0d0d0d;
+  color: #555;
+  font-size: 1rem;
+  margin-top: 20px;
 }
