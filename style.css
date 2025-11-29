@@ -1,5 +1,5 @@
 /* =========================
-   GLOBAL STYLES - Elite Cyber Look
+   GLOBAL STYLES
 ========================= */
 body {
   margin: 0;
@@ -31,108 +31,121 @@ header {
 }
 .logo-title span {
   color: #ff2e2e;
-  text-shadow: 0 0 15px rgba(255, 50, 50, 0.9);
+  text-shadow: 0 0 12px rgba(255, 50, 50, 0.9);
 }
 
 /* =========================
-   HEX GRID
+   GRID
 ========================= */
 .grid {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 26px;
+  gap: 24px;
   padding: 16px;
   max-width: 1300px;
   margin: auto;
 }
 
 /* =========================
-   CARD (HEXAGON)
+   HEXAGON CARD
 ========================= */
 .card {
-  width: 185px;
-  height: 210px;
+  position: relative;
+  width: 200px;
+  height: 250px;
   background: linear-gradient(155deg, #181818, #0b0b0b);
-  clip-path: polygon(
-    25% 5%, 75% 5%,
-    100% 50%,
-    75% 95%, 25% 95%,
-    0% 50%
-  );
-  border: 2px solid rgba(255, 50, 50, 0.5);
-  box-shadow: 0 0 25px rgba(255, 50, 50, 0.25);
-  padding: 18px 15px;
+  clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
+  border: 2px solid rgba(255, 50, 50, 0.4);
+  box-shadow: 0 0 20px rgba(255, 65, 65, 0.25);
+  padding: 15px;
+  
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  justify-content: space-between;
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  overflow: visible;
 }
 
-/* Refined hover effect (no tilt) */
+/* Red glow background on hover */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: -10px;
+  background: rgba(255, 0, 0, 0);
+  border-radius: 20px;
+  filter: blur(20px);
+  opacity: 0;
+  z-index: -1;
+  transition: opacity 0.3s ease, background 0.3s ease;
+}
+
+.card:hover::before {
+  background: rgba(255, 0, 0, 0.5);
+  opacity: 1;
+}
+
 .card:hover {
-  transform: translateY(-6px) scale(1.03);
+  transform: translateY(-5px) scale(1.03);
   border-color: #ff4a4a;
-  box-shadow: 
-    0 0 38px rgba(255, 65, 65, 0.75),
-    0 15px 25px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 30px rgba(255, 65, 65, 0.65);
 }
 
 /* =========================
-   PROFILE IMAGE (PERFECT ROUND CENTERED)
+   PROFILE IMAGE
 ========================= */
 .page-img {
   width: 100px;
   height: 100px;
   object-fit: cover;
   border-radius: 50%;
-  border: 4px solid #ff3b3b;
-  box-shadow: 0 0 18px rgba(255, 65, 65, 0.75);
+  border: 3px solid #ff3b3b;
+  box-shadow: 0 0 12px rgba(255, 65, 65, 0.55);
   margin-bottom: 14px;
-  position: relative;
-  top: 2px; /* Slight upward nudge for natural placement */
 }
 
 /* =========================
-   TEXT STYLING
+   TEXT
 ========================= */
 .card h2 {
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   margin: 6px 0 2px;
-  letter-spacing: 1px;
   text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .followers {
   font-size: 0.85rem;
-  margin: 0;
   color: #cfcfcf;
+  margin: 0;
 }
 
 .price {
-  font-size: 1.2rem;
-  margin: 6px 0;
-  color: #ffc80a;
-  text-shadow: 0 0 6px rgba(255, 200, 51, 0.8);
+  font-size: 1rem;
+  margin: 4px 0;
+  color: #ffae00; /* Non-neon */
 }
 
 /* =========================
    BUTTON
 ========================= */
 .btn {
-  background: linear-gradient(180deg, #ff4141, #b60000);
+  background: #ff2727;
   color: #fff;
-  padding: 6px 18px;
+  padding: 7px 20px;
   border-radius: 6px;
   font-size: 0.95rem;
   text-decoration: none;
-  cursor: pointer;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  display: inline-block;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 10px;
 }
+
 .btn:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 18px rgba(255, 38, 38, 0.85);
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(255, 38, 38, 0.6);
 }
 
 /* =========================
@@ -146,12 +159,12 @@ footer {
 }
 
 /* =========================
-   RESPONSIVE (MOBILE TWEAKS)
+   RESPONSIVE
 ========================= */
-@media (max-width: 400px) {
+@media (max-width: 480px) {
   .card {
-    width: 160px;
-    height: 190px;
+    width: 165px;
+    height: 230px;
     padding: 12px;
   }
   .page-img {
