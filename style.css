@@ -35,7 +35,7 @@ header {
 }
 
 /* =========================
-   GRID
+   GRID (Desktop / Tablet)
 ========================= */
 .grid {
   display: flex;
@@ -48,7 +48,7 @@ header {
 }
 
 /* =========================
-   HEXAGON CARD (FINAL FIX)
+   HEXAGON CARD
 ========================= */
 .card {
   position: relative;
@@ -70,18 +70,16 @@ header {
   overflow: visible;
 }
 
-/* Ensure fixed layout without cutting off */
 .card > * {
   flex-shrink: 0;
 }
 
-/* Button stays at bottom */
 .card .btn {
   margin-top: auto;
   margin-bottom: 5px;
 }
 
-/* Red glow behind card on hover */
+/* Glow on hover */
 .card::before {
   content: "";
   position: absolute;
@@ -93,6 +91,7 @@ header {
   z-index: -1;
   transition: opacity 0.3s ease, background 0.3s ease;
 }
+
 .card:hover::before {
   background: rgba(255, 0, 0, 0.5);
   opacity: 1;
@@ -105,7 +104,7 @@ header {
 }
 
 /* =========================
-   PROFILE IMAGE (ROUND)
+   PROFILE IMAGE
 ========================= */
 .page-img {
   width: 100px;
@@ -118,7 +117,7 @@ header {
 }
 
 /* =========================
-   TEXT STYLES
+   TEXT STYLING
 ========================= */
 .card h2 {
   font-size: 1.2rem;
@@ -136,7 +135,7 @@ header {
 .price {
   font-size: 1rem;
   margin: 4px 0;
-  color: #ffae00;
+  color: #ffae00; /* clean, not neon */
 }
 
 /* =========================
@@ -169,9 +168,41 @@ footer {
 }
 
 /* =========================
-   MOBILE FIX
+   MOBILE CAROUSEL ENABLED
 ========================= */
-@media (max-width: 480px) {
+@media (max-width: 600px) {
+  .grid {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .card {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    width: 180px;
+    height: 240px;
+  }
+
+  /* Optional scrollbar styling */
+  .grid::-webkit-scrollbar {
+    height: 5px;
+  }
+  .grid::-webkit-scrollbar-thumb {
+    background: rgba(255, 50, 50, 0.5);
+    border-radius: 10px;
+  }
+}
+
+/* =========================
+   EXTRA SMALL SCREEN TWEAK
+========================= */
+@media (max-width: 400px) {
   .card {
     width: 165px;
     height: 230px;
