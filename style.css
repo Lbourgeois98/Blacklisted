@@ -9,17 +9,16 @@
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
-  overflow-y: hidden; /* REMOVE VERTICAL SCROLL */
   font-family: 'Anton', sans-serif;
   color: #fff;
   text-align: center;
   background: #080808;
-  overflow-x: hidden;
+  overflow-x: hidden; /* No sideways scroll of page */
+  overflow-y: auto;   /* Enable normal page scroll (prevents clipping) */
 }
 
 /* =========================
-   ANIMATED NEON BACKGROUND
+   ANIMATED BACKGROUND
 ========================= */
 body::before {
   content: "";
@@ -40,7 +39,7 @@ body::before {
 }
 
 /* =========================
-   HEADER
+   HEADER (RED TEXT, BLACK OUTLINE)
 ========================= */
 header {
   padding: 30px 10px;
@@ -48,48 +47,42 @@ header {
 
 .logo-title {
   font-size: clamp(3rem, 8vw, 5rem);
-  margin: 0;
+  margin: 0 auto 20px;
   text-transform: uppercase;
-  color: #ff2727;          /* RED text */
-  -webkit-text-stroke: 2px #000; /* BLACK OUTLINE */
-  text-shadow: none;
+  display: inline-block;
+  color: #ff2727;
+  -webkit-text-stroke: 2px #000;
 }
 
 .logo-title span {
-  color: #ff2727 !important; /* Keep span red */
+  color: #ff2727 !important;
 }
 
 /* =========================
-   GRID (DESKTOP LAYOUT)
+   GRID (CENTERED UNDER HEADER)
 ========================= */
 .grid {
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
+  flex-wrap: nowrap; /* keeps horizontal scrolling */
   gap: 40px;
-  padding: 25px;
-  max-width: 1500px;
-  margin: auto;
+  width: 100%;
+  padding: 10px 0 40px;
+  overflow-x: auto; /* horizontal scroll only */
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+  max-width: 100vw;
+  margin: 0 auto;
+}
+
+.grid::-webkit-scrollbar {
+  display: none;
 }
 
 /* =========================
-   GRID (MOBILE CAROUSEL)
-========================= */
-@media (max-width: 600px) {
-  .grid {
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    overflow-y: hidden;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    gap: 20px;
-    padding: 20px;
-  }
-  .grid::-webkit-scrollbar { display: none; }
-}
-
-/* =========================
-   CARD DESIGN
+   CARD
 ========================= */
 .card {
   background: #111;
@@ -98,6 +91,7 @@ header {
   border-radius: 16px;
   padding: 40px 25px 50px;
   width: 350px;
+  min-width: 350px;
   text-align: center;
   scroll-snap-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -127,7 +121,7 @@ header {
 }
 
 /* =========================
-   TEXT STYLES
+   TEXT
 ========================= */
 .card h2 {
   font-size: 2rem;
@@ -168,9 +162,10 @@ header {
 }
 
 /* =========================
-   CAROUSEL ARROWS (DESKTOP ONLY)
+   ARROWS
 ========================= */
 .carousel-arrow {
+  display: block !important;
   position: fixed;
   top: 50%;
   transform: translateY(-50%);
@@ -181,20 +176,16 @@ header {
   padding: 14px 20px;
   border-radius: 8px;
   cursor: pointer;
-  z-index: 20;
+  z-index: 9999;
   transition: transform 0.25s ease;
-}
-
-.carousel-arrow:hover {
-  transform: translateY(-50%) scale(1.1);
-  box-shadow: 0 0 20px rgba(255, 40, 40, 0.8);
 }
 
 .carousel-arrow.left { left: 10px; }
 .carousel-arrow.right { right: 10px; }
 
-@media (max-width: 600px) {
-  .carousel-arrow { display: none; }
+.carousel-arrow:hover {
+  transform: translateY(-50%) scale(1.1);
+  box-shadow: 0 0 20px rgba(255, 40, 40, 0.8);
 }
 
 /* =========================
