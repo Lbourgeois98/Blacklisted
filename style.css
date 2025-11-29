@@ -1,120 +1,134 @@
 /* =========================
-   GLOBAL STYLES - Vibrant Mobile Optimized
+   GLOBAL STYLES - Cyberpulse
 ========================= */
 body {
   margin: 0;
   font-family: 'Anton', sans-serif;
   color: #fff;
   text-align: center;
-  background: radial-gradient(circle at center, rgba(255, 27, 27, 0.2), #070707 75%),
+  background: radial-gradient(circle at center, rgba(255, 0, 0, 0.25), #050505 75%),
               url("https://www.transparenttextures.com/patterns/asfalt-dark.png");
   background-size: cover;
-  animation: pulseBackground 4s ease-in-out infinite;
+  animation: pulseBG 4s ease-in-out infinite;
 }
 
-@keyframes pulseBackground {
-  0%   { background-color: #070707; }
-  50%  { background-color: #150000; }
-  100% { background-color: #070707; }
+@keyframes pulseBG {
+  0%, 100% { background-color: #050505; }
+  50% { background-color: #0e0101; }
 }
 
 /* =========================
    HEADER
 ========================= */
 header {
-  padding: 24px 12px 16px;
+  padding: 20px 10px;
 }
+
 .logo-title {
-  font-size: clamp(2rem, 6vw, 3.2rem);
-  letter-spacing: 2px;
+  font-size: clamp(2.2rem, 6vw, 3.5rem);
   margin: 0;
+  letter-spacing: 3px;
+  text-transform: uppercase;
 }
+
 .logo-title span {
   color: #ff4141;
-  text-shadow: 0 0 8px rgba(255, 65, 65, 0.6);
+  text-shadow: 0 0 12px rgba(255, 65, 65, 0.9);
 }
 
 /* =========================
-   GRID - MOBILE-FIRST FLEXIBLE COLUMNS
+   GRID - Mobile Friendly Hex Layout
 ========================= */
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 26px;
   padding: 16px;
-  max-width: 1200px;
+  max-width: 1300px;
   margin: auto;
-}
-
-/* Extra small device tweaks */
-@media (max-width: 400px) {
-  .grid {
-    gap: 10px;
-  }
-  .card {
-    padding: 8px;
-  }
-  .card h2 {
-    font-size: 1rem;
-  }
-  .page-img {
-    width: 80px;
-    height: 80px;
-  }
+  perspective: 1200px; /* Enables 3D tilt */
 }
 
 /* =========================
-   CARD STYLE
+   HEXAGON CARD
 ========================= */
 .card {
-  background: linear-gradient(145deg, #181818, #0d0d0d);
-  border: 1px solid #303030;
-  border-radius: 14px;
-  padding: 12px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  width: 180px;
+  height: 200px;
+  background: linear-gradient(145deg, #131313, #090909);
+  clip-path: polygon(
+    25% 5%, 75% 5%,
+    100% 50%,
+    75% 95%, 25% 95%,
+    0% 50%
+  );
+  border: 2px solid rgba(255, 38, 38, 0.6);
+  box-shadow: 0 0 25px rgba(255, 65, 65, 0.3);
+  padding: 15px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  min-width: 0; /* Ensures proper text wrapping */
+  justify-content: center;
+  transform-style: preserve-3d;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+  min-width: 0; /* Prevents text overflow */
 }
+
+/* 3D Tilt + Ultimate Energy Pulse */
 .card:hover {
-  transform: translateY(-6px) scale(1.025);
-  box-shadow: 0 0 18px rgba(255, 38, 38, 0.45);
-  border-color: #ff4141;
+  transform: rotateX(12deg) rotateY(-12deg) translateY(-8px) scale(1.06);
+  border-color: #ff5252;
+  box-shadow: 0 0 45px rgba(255, 70, 70, 0.9),
+              0 15px 25px rgba(0, 0, 0, 0.7);
+  animation: neonPulse 0.8s infinite alternate ease-in-out;
+}
+
+@keyframes neonPulse {
+  0% {
+    border-color: rgba(255, 38, 38, 0.7);
+    box-shadow: 0 0 25px rgba(255, 38, 38, 0.4);
+  }
+  100% {
+    border-color: rgba(255, 119, 119, 1);
+    box-shadow: 0 0 45px rgba(255, 119, 119, 0.9);
+  }
 }
 
 /* =========================
-   PROFILE IMAGE
+   PROFILE IMAGE (Circular Cut)
 ========================= */
 .page-img {
-  width: clamp(90px, 25vw, 120px);
-  height: clamp(90px, 25vw, 120px);
+  width: 90px;
+  height: 90px;
   object-fit: cover;
-  border-radius: 50%;
+  clip-path: circle(50% at center);
   border: 3px solid #ff4141;
-  box-shadow: 0 0 12px rgba(255, 50, 50, 0.5);
+  box-shadow: 0 0 12px rgba(255, 65, 65, 0.6);
   margin-bottom: 10px;
 }
 
 /* =========================
-   TEXT
+   TEXT STYLES
 ========================= */
 .card h2 {
-  font-size: clamp(1.2rem, 4vw, 1.5rem);
-  margin: 5px 0;
-  text-transform: uppercase;
+  font-size: 1.2rem;
+  margin: 4px 0;
   letter-spacing: 1px;
+  text-transform: uppercase;
 }
+
 .followers {
-  font-size: 0.95rem;
+  font-size: 0.85rem;
+  margin: 2px 0;
   color: #cfcfcf;
-  margin: 0;
 }
+
 .price {
-  font-size: clamp(1.2rem, 5vw, 1.5rem);
-  color: #ffc933;
-  margin: 6px 0 8px;
-  text-shadow: 0 0 6px rgba(255, 201, 51, 0.6);
+  font-size: 1.2rem;
+  margin: 6px 0;
+  color: #ffc533;
+  text-shadow: 0 0 6px rgba(255, 200, 51, 0.7);
 }
 
 /* =========================
@@ -123,23 +137,46 @@ header {
 .btn {
   background: linear-gradient(180deg, #ff4141, #b60000);
   color: #fff;
-  padding: 8px 20px;
-  border-radius: 8px;
+  padding: 6px 18px;
+  border-radius: 6px;
+  font-size: 0.95rem;
   text-decoration: none;
-  font-size: 1rem;
-  transition: transform 0.2s ease;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
+
 .btn:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 15px rgba(255, 65, 65, 0.6);
+  box-shadow: 0 0 18px rgba(255, 38, 38, 0.85);
 }
 
 /* =========================
    FOOTER
 ========================= */
 footer {
-  background: #0a0a0a;
-  padding: 14px;
+  background: #000;
+  padding: 12px;
   font-size: 0.85rem;
-  color: #999;
+  color: #777;
+}
+
+/* =========================
+   RESPONSIVE TWEAKS
+========================= */
+@media (max-width: 400px) {
+  .grid {
+    gap: 16px;
+  }
+  .card {
+    width: 160px;
+    height: 185px;
+    padding: 10px;
+  }
+  .page-img {
+    width: 75px;
+    height: 75px;
+  }
+  .card h2 {
+    font-size: 1rem;
+  }
 }
