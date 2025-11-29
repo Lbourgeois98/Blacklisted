@@ -48,7 +48,7 @@ header {
 }
 
 /* =========================
-   HEXAGON CARD
+   HEXAGON CARD (FINAL FIX)
 ========================= */
 .card {
   position: relative;
@@ -59,17 +59,29 @@ header {
   border: 2px solid rgba(255, 50, 50, 0.4);
   box-shadow: 0 0 20px rgba(255, 65, 65, 0.25);
   padding: 15px;
-  
+  text-align: center;
+
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
 
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
   overflow: visible;
 }
 
-/* Red glow background on hover */
+/* Ensure fixed layout without cutting off */
+.card > * {
+  flex-shrink: 0;
+}
+
+/* Button stays at bottom */
+.card .btn {
+  margin-top: auto;
+  margin-bottom: 5px;
+}
+
+/* Red glow behind card on hover */
 .card::before {
   content: "";
   position: absolute;
@@ -81,7 +93,6 @@ header {
   z-index: -1;
   transition: opacity 0.3s ease, background 0.3s ease;
 }
-
 .card:hover::before {
   background: rgba(255, 0, 0, 0.5);
   opacity: 1;
@@ -94,7 +105,7 @@ header {
 }
 
 /* =========================
-   PROFILE IMAGE
+   PROFILE IMAGE (ROUND)
 ========================= */
 .page-img {
   width: 100px;
@@ -107,7 +118,7 @@ header {
 }
 
 /* =========================
-   TEXT
+   TEXT STYLES
 ========================= */
 .card h2 {
   font-size: 1.2rem;
@@ -125,7 +136,7 @@ header {
 .price {
   font-size: 1rem;
   margin: 4px 0;
-  color: #ffae00; /* Non-neon */
+  color: #ffae00;
 }
 
 /* =========================
@@ -140,7 +151,6 @@ header {
   text-decoration: none;
   display: inline-block;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  margin-top: 10px;
 }
 
 .btn:hover {
@@ -159,7 +169,7 @@ footer {
 }
 
 /* =========================
-   RESPONSIVE
+   MOBILE FIX
 ========================= */
 @media (max-width: 480px) {
   .card {
