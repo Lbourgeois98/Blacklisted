@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Disable zooming + double-tap zoom -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Facebook Pages For Sale</title>
   <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css" />
@@ -13,12 +14,11 @@
     <h1 class="logo-title">FACEBOOK <span>PAGES</span></h1>
   </header>
 
-  <!-- Arrow Buttons -->
+  <!-- Arrows -->
   <button class="carousel-arrow left" onclick="scrollCards(-1)">&#10094;</button>
   <button class="carousel-arrow right" onclick="scrollCards(1)">&#10095;</button>
 
   <section class="grid">
-
     <!-- CARD 1 -->
     <div class="card">
       <img class="page-img" src="images/IMG_2595.jpeg" alt="Georgia Gaming">
@@ -178,27 +178,47 @@
     <p>© 2025 Alexander Smith</p>
   </footer>
 
-  <!-- JavaScript -->
+  <!-- JS: center each card on arrow click + stop double-tap zoom -->
   <script>
     let currentIndex = 0;
 
     function scrollCards(direction) {
       const cards = document.querySelectorAll(".card");
       const grid = document.querySelector(".grid");
-      if (!cards.length) return;
+      if (!cards.length || !grid) return;
 
       currentIndex += direction;
+
       if (currentIndex < 0) currentIndex = 0;
       if (currentIndex >= cards.length) currentIndex = cards.length - 1;
 
-      const cardWidth = cards[0].offsetWidth + 40;
-      const windowCenter = window.innerWidth / 2;
-      const cardCenter = cardWidth / 2;
-      const scrollX = currentIndex * cardWidth - (windowCenter - cardCenter);
+      const gap = 40; // must match CSS gap
+      const card = cards[currentIndex];
+      const cardWidth = card.offsetWidth;
+      const totalWidth = cardWidth + gap;
 
-      grid.style.transition = "transform 0.45s ease-in-out";
-      grid.style.transform = `translateX(-${Math.max(0, scrollX)}px)`;
+      const target =
+        currentIndex * totalWidth - (grid.clientWidth / 2 - cardWidth / 2);
+
+      grid.scrollTo({
+        left: Math.max(0, target),
+        behavior: "smooth"
+      });
     }
+
+    // Prevent double-tap zoom
+    let lastTouchEnd = 0;
+    document.addEventListener(
+      "touchend",
+      function (event) {
+        const now = Date.now();
+        if (now - lastTouchEnd <= 300) {
+          event.preventDefault();
+        }
+        lastTouchEnd = now;
+      },
+      { passive: false }
+    );
   </script>
 
 </body>
