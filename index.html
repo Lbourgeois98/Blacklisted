@@ -12,6 +12,10 @@
     <h1 class="logo-title">FACEBOOK <span>PAGES</span></h1>
   </header>
 
+  <!-- Arrow Buttons (Only visible on mobile via CSS) -->
+  <button class="carousel-arrow left" onclick="scrollCards(-1)">&#10094;</button>
+  <button class="carousel-arrow right" onclick="scrollCards(1)">&#10095;</button>
+
   <section class="grid">
     <!-- Example card with image -->
     <div class="card">
@@ -87,7 +91,7 @@
     </div>
 
     <div class="card">
-      <img class="page-img" src="images/rose.jpeg" alt="Rising Horses">
+      <img class="page-img" src="images/rose.jpeg" alt="Rose Walker Casino">
       <h2>Rose Walker Casino</h2>
       <p class="followers">👥 337 Followers</p>
       <p class="price">$200</p>
@@ -95,7 +99,7 @@
     </div>
 
     <div class="card">
-      <img class="page-img" src="images/meagan.jpeg" alt="Rising Horses">
+      <img class="page-img" src="images/meagan.jpeg" alt="Meagan Williams">
       <h2>Meagan Williams</h2>
       <p class="followers">👥 270 Followers</p>
       <p class="price">$200</p>
@@ -103,7 +107,7 @@
     </div>
 
     <div class="card">
-      <img class="page-img" src="images/ava.jpeg" alt="Rising Horses">
+      <img class="page-img" src="images/ava.jpeg" alt="Ava Royale">
       <h2>Ava Royale</h2>
       <p class="followers">👥 976 Followers</p>
       <p class="price">$350</p>
@@ -111,7 +115,7 @@
     </div>
 
     <div class="card">
-      <img class="page-img" src="images/shc.jpeg" alt="Rising Horses">
+      <img class="page-img" src="images/shc.jpeg" alt="Slot Hustle City">
       <h2>Slot Hustle City</h2>
       <p class="followers">👥 806 Followers</p>
       <p class="price">$350</p>
@@ -119,7 +123,7 @@
     </div>
 
     <div class="card">
-      <img class="page-img" src="images/eilish.jpeg" alt="Rising Horses">
+      <img class="page-img" src="images/eilish.jpeg" alt="Eilish Smith">
       <h2>Eilish Smith</h2>
       <p class="followers">👥 2.2k Followers</p>
       <p class="price">$400</p>
@@ -127,7 +131,7 @@
     </div>
 
     <div class="card">
-      <img class="page-img" src="images/golden.jpg" alt="Rising Horses">
+      <img class="page-img" src="images/golden.jpg" alt="Golden Eyes Slots">
       <h2>Golden Eyes Slots</h2>
       <p class="followers">👥 183 Followers</p>
       <p class="price">$150</p>
@@ -135,7 +139,7 @@
     </div>
 
     <div class="card">
-      <img class="page-img" src="images/lucy.jpg" alt="Rising Horses">
+      <img class="page-img" src="images/lucy.jpg" alt="Lucy Luxe">
       <h2>Lucy Luxe</h2>
       <p class="followers">👥 397 Followers</p>
       <p class="price">$200</p>
@@ -143,17 +147,26 @@
     </div>
 
     <div class="card">
-      <img class="page-img" src="images/clair.jpg" alt="Rising Horses">
+      <img class="page-img" src="images/clair.jpg" alt="Clair Marry">
       <h2>Clair Marry</h2>
       <p class="followers">👥 855 Followers</p>
       <p class="price">$350</p>
       <a href="https://www.facebook.com/people/Clair-Marry/61557015405608/" target="_blank" class="btn">VIEW</a>
     </div>
-
   </section>
 
   <footer>
     <p>© 2025 Alexander Smith</p>
   </footer>
+
+  <!-- JS FOR CAROUSEL -->
+  <script>
+    function scrollCards(direction) {
+      const grid = document.querySelector('.grid');
+      const card = document.querySelector('.grid .card');
+      const scrollAmount = card.getBoundingClientRect().width + 20;
+      grid.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+    }
+  </script>
 </body>
 </html>
