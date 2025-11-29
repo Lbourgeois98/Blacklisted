@@ -1,17 +1,26 @@
-/* FONT IMPORT */
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Orbitron:wght@600&display=swap');
+/* =========================
+   FONT IMPORT
+========================= */
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
 
-/* GLOBAL SETTINGS */
-body {
+/* =========================
+   GLOBAL SETTINGS
+========================= */
+html, body {
   margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-y: hidden; /* REMOVE VERTICAL SCROLL */
+  font-family: 'Anton', sans-serif;
   color: #fff;
   text-align: center;
-  font-family: 'Anton', sans-serif;
   background: #080808;
   overflow-x: hidden;
 }
 
-/* SUBTLE NEON ANIMATED BACKGROUND */
+/* =========================
+   ANIMATED NEON BACKGROUND
+========================= */
 body::before {
   content: "";
   position: fixed;
@@ -19,7 +28,7 @@ body::before {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle, rgba(255,0,0,0.12), transparent 75%);
+  background: radial-gradient(circle, rgba(255, 0, 0, 0.12), transparent 75%);
   animation: neonPulse 6s ease-in-out infinite;
   z-index: -1;
   pointer-events: none;
@@ -30,7 +39,9 @@ body::before {
   50% { transform: scale(1.25); opacity: .7; }
 }
 
-/* HEADER */
+/* =========================
+   HEADER
+========================= */
 header {
   padding: 30px 10px;
 }
@@ -39,15 +50,18 @@ header {
   font-size: clamp(3rem, 8vw, 5rem);
   margin: 0;
   text-transform: uppercase;
-  -webkit-text-stroke: 2px #ff2e2e;
-  color: #fff;
+  color: #ff2727;          /* RED text */
+  -webkit-text-stroke: 2px #000; /* BLACK OUTLINE */
+  text-shadow: none;
 }
 
 .logo-title span {
-  color: #ff2727; /* keep this red */
+  color: #ff2727 !important; /* Keep span red */
 }
 
-/* GRID — DESKTOP */
+/* =========================
+   GRID (DESKTOP LAYOUT)
+========================= */
 .grid {
   display: flex;
   flex-wrap: wrap;
@@ -58,11 +72,14 @@ header {
   margin: auto;
 }
 
-/* GRID — MOBILE CAROUSEL */
+/* =========================
+   GRID (MOBILE CAROUSEL)
+========================= */
 @media (max-width: 600px) {
   .grid {
     flex-wrap: nowrap;
     overflow-x: auto;
+    overflow-y: hidden;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
     gap: 20px;
@@ -71,7 +88,9 @@ header {
   .grid::-webkit-scrollbar { display: none; }
 }
 
-/* CARD */
+/* =========================
+   CARD DESIGN
+========================= */
 .card {
   background: #111;
   border: 3px solid #ff2727;
@@ -89,7 +108,9 @@ header {
   box-shadow: 0 0 45px rgba(255, 40, 40, 0.8);
 }
 
-/* PROFILE IMAGE */
+/* =========================
+   PROFILE IMAGE
+========================= */
 .page-img {
   width: 200px;
   height: 200px;
@@ -101,9 +122,13 @@ header {
   transition: transform 0.3s ease;
 }
 
-.page-img:hover { transform: scale(1.06); }
+.page-img:hover {
+  transform: scale(1.06);
+}
 
-/* TEXT */
+/* =========================
+   TEXT STYLES
+========================= */
 .card h2 {
   font-size: 2rem;
   margin: 10px 0;
@@ -123,7 +148,9 @@ header {
   margin: 8px 0 20px;
 }
 
-/* BUTTON */
+/* =========================
+   BUTTON
+========================= */
 .btn {
   background: #ff2727;
   padding: 16px 38px;
@@ -131,8 +158,8 @@ header {
   font-size: 1.6rem;
   color: white;
   text-decoration: none;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
   display: inline-block;
-  transition: transform .25s ease, box-shadow .25s ease;
 }
 
 .btn:hover {
@@ -140,7 +167,9 @@ header {
   box-shadow: 0 0 25px rgba(255, 38, 38, 0.9);
 }
 
-/* ARROWS */
+/* =========================
+   CAROUSEL ARROWS (DESKTOP ONLY)
+========================= */
 .carousel-arrow {
   position: fixed;
   top: 50%;
@@ -153,7 +182,7 @@ header {
   border-radius: 8px;
   cursor: pointer;
   z-index: 20;
-  transition: transform .25s ease;
+  transition: transform 0.25s ease;
 }
 
 .carousel-arrow:hover {
@@ -161,15 +190,16 @@ header {
   box-shadow: 0 0 20px rgba(255, 40, 40, 0.8);
 }
 
-/* Arrow positioning */
 .carousel-arrow.left { left: 10px; }
 .carousel-arrow.right { right: 10px; }
 
-@media (min-width: 601px) {
+@media (max-width: 600px) {
   .carousel-arrow { display: none; }
 }
 
-/* FOOTER */
+/* =========================
+   FOOTER
+========================= */
 footer {
   background: #000;
   padding: 20px;
