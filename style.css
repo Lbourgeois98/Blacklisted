@@ -29,13 +29,13 @@ header {
   margin: 0;
   letter-spacing: 3px;
   text-transform: uppercase;
-  color: #ffffff; /* Normal white */
-  -webkit-text-stroke: 1px #ff2e2e; /* Clean red outline */
-  text-shadow: none !important; /* No glow */
+  color: #ffffff;
+  -webkit-text-stroke: 1px #ff2e2e;
+  text-shadow: none !important;
 }
 
 /* =========================
-   GRID (Desktop / Tablet)
+   GRID (DESKTOP / TABLET)
 ========================= */
 .grid {
   display: flex;
@@ -53,16 +53,9 @@ header {
 .card {
   position: relative;
   width: 260px;
-  height: 340px;
-  background: linear-gradient(160deg, #1b1b1b, #080808);
-  clip-path: polygon(
-    25% 8%,
-    75% 8%,
-    100% 50%,
-    75% 92%,
-    25% 92%,
-    0% 50%
-  );
+  height: auto; /* let content define height */
+  background: #101010;
+  clip-path: polygon(25% 8%, 75% 8%, 100% 50%, 75% 92%, 25% 92%, 0% 50%);
   border: 2px solid rgba(255, 50, 50, 0.35);
   padding: 20px 18px 30px;
   box-shadow: 0 0 25px rgba(255, 65, 65, 0.3);
@@ -70,23 +63,20 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
   text-align: center;
 
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  overflow: visible;
 }
 
 .card > * {
   flex-shrink: 0;
 }
 
-/* Red glow behind cards (always visible, stronger on hover) */
 .card::before {
   content: "";
   position: absolute;
   inset: -18px;
-  background: rgba(255, 0, 0, 0.35);
+  background: rgba(255, 0, 0, 0.4);
   filter: blur(32px);
   opacity: 1;
   z-index: -1;
@@ -94,19 +84,19 @@ header {
   transition: background 0.3s ease, filter 0.3s ease;
 }
 
-.card:hover::before {
-  background: rgba(255, 0, 0, 0.6);
-  filter: blur(40px);
-}
-
 .card:hover {
   transform: translateY(-6px) scale(1.035);
   border-color: #ff4a4a;
-  box-shadow: 0 0 45px rgba(255, 70, 70, 0.9);
+  box-shadow: 0 0 40px rgba(255, 70, 70, 0.9);
+}
+
+.card:hover::before {
+  background: rgba(255, 0, 0, 0.55);
+  filter: blur(40px);
 }
 
 /* =========================
-   PROFILE IMAGE with NEON FRAME
+   PROFILE IMAGE (Neon Frame Only)
 ========================= */
 .page-img {
   width: 130px;
@@ -115,7 +105,7 @@ header {
   border-radius: 50%;
   border: 4px solid #ff2727;
   box-shadow: 0 0 18px rgba(255, 50, 50, 0.95);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
@@ -133,7 +123,7 @@ header {
   text-transform: uppercase;
   letter-spacing: 1px;
   color: #ffffff;
-  -webkit-text-stroke: 1px #ff2e2e; /* Clean red outline */
+  -webkit-text-stroke: 1px #ff2e2e;
   text-shadow: none !important;
 }
 
@@ -150,7 +140,7 @@ header {
 }
 
 /* =========================
-   BUTTON (Never cut off)
+   BUTTON FIX
 ========================= */
 .btn {
   background: #ff2727;
@@ -180,7 +170,7 @@ footer {
 }
 
 /* =========================
-   MOBILE CAROUSEL (Full-width cards)
+   MOBILE FULL SCREEN CARD
 ========================= */
 @media (max-width: 600px) {
   .grid {
@@ -189,43 +179,68 @@ footer {
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
-    gap: 20px;
-    padding: 20px 16px 28px;
+    gap: 14px;
+    padding: 14px;
     justify-content: flex-start;
   }
 
   .card {
     flex: 0 0 auto;
     scroll-snap-align: center;
-    width: 90vw;
-    max-width: 400px;
-    height: 390px;
+    width: 85vw;
+    max-width: 360px;
+    height: auto;
+    padding: 16px 12px 24px;
+    clip-path: polygon(22% 7%, 78% 7%, 100% 50%, 78% 93%, 22% 93%, 0% 50%);
   }
 
-  .grid::-webkit-scrollbar {
-    height: 6px;
+  .page-img {
+    width: 95px;
+    height: 95px;
+    box-shadow: 0 0 14px rgba(255, 50, 50, 0.85);
   }
-  .grid::-webkit-scrollbar-thumb {
-    background: rgba(255, 50, 50, 0.4);
-    border-radius: 10px;
+
+  .card h2 {
+    font-size: 1.1rem;
+    -webkit-text-stroke: 0.8px #ff2e2e;
+  }
+
+  .followers {
+    font-size: 0.8rem;
+  }
+
+  .price {
+    font-size: 0.9rem;
+    margin: 4px 0;
+  }
+
+  .btn {
+    padding: 7px 20px;
+    margin-top: auto;
+  }
+
+  .card::before {
+    inset: -14px;
+    filter: blur(22px);
+    background: rgba(255, 0, 0, 0.4);
+  }
+
+  .card:hover::before {
+    filter: blur(28px);
+    background: rgba(255, 0, 0, 0.55);
   }
 }
 
 /* =========================
-   ULTRA-SMALL DEVICE TWEAK
+   ULTRA SMALL SCREEN (Backup Safety)
 ========================= */
 @media (max-width: 400px) {
   .card {
     width: 92vw;
-    max-width: none;
-    height: 380px;
-    padding: 18px 14px 28px;
+    height: auto;
   }
   .page-img {
-    width: 100px;
-    height: 100px;
-  }
-  .card h2 {
-    font-size: 1.2rem;
+    width: 90px;
+    height: 90px;
   }
 }
